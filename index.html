@@ -476,6 +476,8 @@
 
     <script>
         // Main Logic
+        let activeCategoryId = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             loadCategories();
             fetchRandomNews();
@@ -638,6 +640,13 @@
                 if(navbarInput) navbarInput.value = idOrBarcode;
             }
 
+            // Manage History State
+            if (type === 'category') {
+                activeCategoryId = idOrBarcode;
+            } else if (type === 'search') {
+                activeCategoryId = null;
+            }
+
             try {
                 let url = '';
                 if (type === 'category') {
@@ -706,6 +715,9 @@
        function renderProductDetail(prod) {
     const content = document.getElementById('productContent');
     
+    // Back button logic: Return to category if exists, else Hero
+    const backAction = activeCategoryId ? `showProductPanel('${activeCategoryId}', 'category')` : 'showHero()';
+
     let scoreColor = 'bg-secondary';
     if(prod.genel_skor >= 70) scoreColor = 'bg-success';
     else if(prod.genel_skor >= 40) scoreColor = 'bg-warning';
@@ -730,7 +742,7 @@
 
     content.innerHTML = `
         <div class="d-flex align-items-center mb-4">
-            <button class="btn btn-outline-secondary me-3" onclick="location.reload()"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-outline-secondary me-3" onclick="${backAction}"><i class="bi bi-arrow-left"></i></button>
             <h3 class="mb-0 fw-bold">Ürün Analiz Raporu</h3>
         </div>
 
