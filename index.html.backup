@@ -591,36 +591,31 @@
             }
         }
 
-        // Kamera butonu - Barkod tarayıcı kullan
+        // Kamera butonu
         document.getElementById('cameraButton').addEventListener('click', async () => {
-            const video = document.getElementById('video');
+            const videoElement = document.getElementById('video');
             const cameraContainer = document.getElementById('cameraContainer');
             
-            if (window.barcodeScanner && window.barcodeScanner.isScanning) {
-                // Zaten tarama yapılıyorsa durdur
-                window.barcodeScanner.stopScanning();
-                cameraContainer.classList.remove('active');
-            } else {
-                // Yeni tarama başlat
-                try {
-                    await window.barcodeScanner.startScanning(
-                        video,
-                        (barcode) => {
-                            // Barkod okundu
-                            document.getElementById('barcodeInput').value = barcode;
-                            scanProduct(barcode);
-                            window.barcodeScanner.stopScanning();
-                            cameraContainer.classList.remove('active');
-                        },
-                        (error) => {
-                            alert('Kamera hatası: ' + error.message);
-                            cameraContainer.classList.remove('active');
-                        }
-                    );
-                    cameraContainer.classList.add('active');
-                } catch (error) {
-                    alert('Kamera izni verilmedi: ' + error.message);
-                }
+            try {
+                cameraContainer.classList.add('active');
+                
+                // ZXing ile barkod taramayı başlat
+                await window.barcodeScanner.startScanning(
+                    videoElement,
+                    // Başarı callback
+                    (barcode) => {
+                        scanProduct(barcode);
+                        stopCamera();
+                    },
+                    // Hata callback
+                    (error) => {
+                        alert('Kamera hatası: ' + error.message);
+                        stopCamera();
+                    }
+                );
+            } catch (error) {
+                alert('Kamera başlatılamadı: ' + error.message);
+                stopCamera();
             }
         });
 
@@ -630,19 +625,11 @@
             const input = document.getElementById('barcodeInput');
             input.focus();
             input.select();
-            if (window.barcodeScanner) {
-                window.barcodeScanner.stopScanning();
-            }
-            document.getElementById('cameraContainer').classList.remove('active');
+            stopCamera();
         });
 
         // Durdur butonu
-        document.getElementById('stopBtn').addEventListener('click', () => {
-            if (window.barcodeScanner) {
-                window.barcodeScanner.stopScanning();
-            }
-            document.getElementById('cameraContainer').classList.remove('active');
-        });
+        document.getElementById('stopBtn').addEventListener('click', stopCamera);
 
         function stopCamera() {
             // ZXing taramayı durdur
@@ -790,7 +777,7 @@
         // Haber yenile butonu
         document.getElementById('refreshNews').addEventListener('click', loadNews);
 
-        // Ürün tarama (barkod veya isim ile) - Barkod tarayıcı entegrasyonu
+        // Ürün tarama (barkod veya isim ile)
         async function scanProduct(searchTerm) {
             document.getElementById('productDetailCard').classList.remove('active');
             
@@ -798,170 +785,32 @@
                 return;
             }
             
-            // Barkod tarayıcı modülünü kullan
-            if (typeof scanAndSearchProduct !== 'undefined') {
-                await scanAndSearchProduct(searchTerm.trim());
-            } else {
-                // Fallback: Eski yöntem
-                try {
-                    const response = await fetch(`product.php?barcode=${encodeURIComponent(searchTerm.trim())}`);
-                    const data = await response.json();
-                    
-                    if (data.hata) {
-                        // Ürün bulunamadı - talep gönderme seçeneği sun
-                        showProductNotFound(searchTerm.trim(), data.hata);
-                        return;
-                    }
-                    
-                    displayProductDetail(data);
-                } catch (error) {
-                    alert('API hatası: ' + error.message);
-                }
-            }
-            
-            document.getElementById('barcodeInput').value = '';
-        }
-
-        // Ürün bulunamadı paneli
-        function showProductNotFound(barcode, errorMessage) {
-            const container = document.getElementById('productDetailCard');
-            container.innerHTML = `
-                <div class="card-header">
-                    <h4 class="mb-0">Ürün Bulunamadı</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle"></i> 
-                        <strong>Barkod:</strong> ${escapeHtml(barcode)}<br>
-                        <small>${escapeHtml(errorMessage)}</small>
-                    </div>
-                    
-                    <h5>Bu ürünü sisteme eklemek ister misiniz?</h5>
-                    <p>Ürün bilgilerini girerek moderator onayına gönderebilirsiniz. Onaylandıktan sonra ürün sistemde görünecektir.</p>
-                    
-                    <form id="productRequestForm">
-                        <div class="mb-3">
-                            <label class="form-label">Ürün Adı <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="requestProductName" placeholder="Ürünün adını girin..." required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                            <select class="form-control" id="requestCategory" required>
-                                <option value="">Kategori seçin...</option>
-                                <option value="çikolata">Çikolata</option>
-                                <option value="sakız">Sakız</option>
-                                <option value="yağ">Yağ</option>
-                                <option value="bisküvi">Bisküvi</option>
-                                <option value="tuz">Tuz</option>
-                                <option value="meyve suyu">Meyve Suyu</option>
-                                <option value="enerji içeceği">Enerji İçeceği</option>
-                                <option value="diğer">Diğer</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Marka</label>
-                            <input type="text" class="form-control" id="requestBrand" placeholder="Marka adını girin...">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">İçindekiler</label>
-                            <textarea class="form-control" id="requestIngredients" rows="3" placeholder="İçindekiler listesini girin..."></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notunuz (isteğe bağlı)</label>
-                            <textarea class="form-control" id="requestNote" rows="2" placeholder="Eklemek istediğiniz notlar..."></textarea>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send"></i> Talep Gönder
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('productDetailCard').classList.remove('active')">
-                                <i class="bi bi-x"></i> İptal
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `;
-            container.classList.add('active');
-            
-            // Form gönderme olayı
-            document.getElementById('productRequestForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await submitProductRequest(barcode);
-            });
-        }
-
-        // Ürün talebini gönder
-        async function submitProductRequest(barcode) {
-            const formData = {
-                barcode: barcode,
-                product_name: document.getElementById('requestProductName').value,
-                category: document.getElementById('requestCategory').value,
-                brand: document.getElementById('requestBrand').value,
-                ingredients: document.getElementById('requestIngredients').value,
-                user_note: document.getElementById('requestNote').value
-            };
-            
             try {
-                const response = await fetch('product_request.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+                const response = await fetch(`product.php?barcode=${encodeURIComponent(searchTerm.trim())}`);
+                const data = await response.json();
                 
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Başarılı mesajı göster
-                    document.getElementById('productDetailCard').innerHTML = `
-                        <div class="card-header">
-                            <h4 class="mb-0">Talep Gönderildi</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-success">
-                                <i class="bi bi-check-circle"></i> 
-                                <strong>Talebiniz başarıyla gönderildi!</strong><br>
-                                <small>${result.message}</small>
-                            </div>
-                            <button class="btn btn-primary" onclick="document.getElementById('productDetailCard').classList.remove('active')">
-                                <i class="bi bi-arrow-left"></i> Geri Dön
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    alert('Talep gönderilemedi: ' + result.message);
+                if (data.hata) {
+                    alert('Hata: ' + data.hata);
+                    return;
                 }
+                
+                displayProductDetail(data);
+                document.getElementById('barcodeInput').value = '';
             } catch (error) {
-                alert('İstek gönderilirken hata oluştu: ' + error.message);
+                alert('API hatası: ' + error.message);
             }
         }
 
         // Ürün detayını göster
         function displayProductDetail(data) {
-            console.log('Ürün detayı gösteriliyor:', data); // Debug
-            
             document.getElementById('productName').textContent = data.urun_adi;
             document.getElementById('productCategory').textContent = data.kategori || 'Kategori yok';
             
             const img = document.getElementById('productImage');
             if (data.gorsel_url && data.gorsel_url.trim() !== '') {
-                // CORS ve hata yönetimi ile görsel yükleme
-                img.onerror = function() {
-                    // Görsel yüklenemezse placeholder göster
-                    this.src = 'https://via.placeholder.com/300x300?text=Görsel+Yüklenemedi';
-                    this.alt = 'Görsel yüklenemedi - URL erişilemiyor veya CORS hatası';
-                    console.warn('Görsel yüklenemedi:', data.gorsel_url, '- Olası nedenler: CORS politikası, geçersiz URL veya sunucu erişim sorunu');
-                };
-                img.onload = function() {
-                    console.log('Görsel başarıyla yüklendi:', data.gorsel_url);
-                };
-                // Cross-origin ayarı (CORS için)
-                img.crossOrigin = 'anonymous';
                 img.src = data.gorsel_url;
             } else {
                 img.src = 'https://via.placeholder.com/300x300?text=Görsel+Yok';
-                img.alt = 'Ürün görseli bulunamadı';
             }
             
             // Skor
@@ -978,7 +827,7 @@
                 scoreCircle.classList.add('score-low');
             }
             
-            // İçindekiler - Paragraf mantığıyla göster
+            // İçindekiler
             const ingredientsList = document.getElementById('ingredientsList');
             ingredientsList.innerHTML = '';
             
@@ -987,47 +836,34 @@
                 return;
             }
             
-            // Paragraf container oluştur
-            const paragraph = document.createElement('div');
-            paragraph.className = 'ingredients-paragraph';
-            paragraph.style.cssText = 'line-height: 1.6; margin-bottom: 1rem;';
-            
             const riskliIsimler = data.riskli_icerikler ? data.riskli_icerikler.map(r => r.isim) : [];
             
-            data.icerikler.forEach((ingredient, index) => {
+            data.icerikler.forEach(ingredient => {
+                const item = document.createElement('div');
+                item.className = 'ingredient-item';
+                
                 const isRiskli = riskliIsimler.some(riskli => 
                     ingredient.toLowerCase().includes(riskli.toLowerCase()) || 
                     riskli.toLowerCase().includes(ingredient.toLowerCase())
                 );
                 
-                // Virgül ekle (sonuncu hariç)
-                const separator = index < data.icerikler.length - 1 ? ', ' : '';
-                
                 if (isRiskli) {
-                    // Riskli içerik - sarı badge ile işaretle
-                    const span = document.createElement('span');
-                    span.className = 'risk-ingredient';
-                    span.style.cssText = 'background-color: #fff3cd; color: #856404; padding: 2px 6px; border-radius: 4px; cursor: pointer; border-bottom: 2px solid #ffc107; font-weight: 500;';
-                    span.textContent = ingredient;
-                    span.addEventListener('click', () => toggleRiskDetail(ingredient, span, data.riskli_icerikler));
-                    span.title = 'Detay için tıklayın';
-                    
-                    paragraph.appendChild(span);
-                    paragraph.appendChild(document.createTextNode(separator));
+                    const badge = document.createElement('span');
+                    badge.className = 'risk-badge';
+                    badge.textContent = ingredient;
+                    badge.addEventListener('click', () => toggleRiskDetail(ingredient, item, data.riskli_icerikler));
+                    item.appendChild(badge);
                 } else {
-                    // Normal içerik
-                    const span = document.createElement('span');
-                    span.textContent = ingredient + separator;
-                    paragraph.appendChild(span);
+                    item.textContent = ingredient;
                 }
+                
+                const detail = document.createElement('div');
+                detail.className = 'risk-detail';
+                detail.id = `risk-${ingredient.replace(/\s+/g, '-')}`;
+                item.appendChild(detail);
+                
+                ingredientsList.appendChild(item);
             });
-            
-            ingredientsList.appendChild(paragraph);
-            
-            // Risk detayı container
-            const riskDetailContainer = document.createElement('div');
-            riskDetailContainer.id = 'riskDetailContainer';
-            ingredientsList.appendChild(riskDetailContainer);
             
             document.getElementById('productDetailCard').classList.add('active');
             document.getElementById('productDetailCard').scrollIntoView({ behavior: 'smooth' });
@@ -1035,30 +871,24 @@
 
         // Risk detayı
         function toggleRiskDetail(ingredient, parent, riskliIcerikler) {
-            const container = document.getElementById('riskDetailContainer');
+            const detail = document.getElementById(`risk-${ingredient.replace(/\s+/g, '-')}`);
             
-            // Tüm detayları temizle
-            container.innerHTML = '';
+            document.querySelectorAll('.risk-detail.show').forEach(d => {
+                if (d.id !== detail.id) d.classList.remove('show');
+            });
             
-            const riskInfo = riskliIcerikler.find(r => 
-                ingredient.toLowerCase().includes(r.isim.toLowerCase()) || 
-                r.isim.toLowerCase().includes(ingredient.toLowerCase())
-            );
-            
-            if (riskInfo) {
-                const detail = document.createElement('div');
-                detail.className = 'risk-detail-panel';
-                detail.style.cssText = 'background-color: #fff3f8; border-left: 4px solid var(--color-accent); padding: 1rem; margin-top: 1rem; border-radius: 8px; animation: slideDown 0.3s ease-out;';
+            if (detail.classList.contains('show')) {
+                detail.classList.remove('show');
+            } else {
+                const riskInfo = riskliIcerikler.find(r => 
+                    ingredient.toLowerCase().includes(r.isim.toLowerCase()) || 
+                    r.isim.toLowerCase().includes(ingredient.toLowerCase())
+                );
                 
-                detail.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <h6 style="margin: 0; color: var(--color-dark); font-weight: bold;">${escapeHtml(riskInfo.isim)}</h6>
-                        <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 1.2rem;">×</button>
-                    </div>
-                    <p style="margin: 0; color: #6c757d; line-height: 1.5;">${escapeHtml(riskInfo.zarar_nedeni)}</p>
-                `;
-                
-                container.appendChild(detail);
+                if (riskInfo) {
+                    detail.innerHTML = `<strong>${escapeHtml(riskInfo.isim)}</strong><br>${escapeHtml(riskInfo.zarar_nedeni)}`;
+                }
+                detail.classList.add('show');
             }
         }
 
