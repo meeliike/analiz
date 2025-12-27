@@ -59,11 +59,7 @@ try {
 
         // Tuz
         ['8690771130925','BİLLUR TUZ 3 KG DENİZ TUZU','Rafine Tuz (sodyum klorür), topaklanmayı önleyici.','Alerjen içermez.','https://barkodist.com//assets/img/barkod/billur-tuz-rafine-iyotlu-sofra-tuzu-karton-tuzluk-125-g-barkodu.jpeg','tuz'],
-        ['8681856394141','Mayi Tuz Öğütülmüş Sofra Tuzu (İyot İlaveli) 2000 gr','%100 doğal Kaynak Tuzu, Potasyum İyodat.','Alerjen içermez.','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUXdaDr_EaSD2JhDcZBemNcsxPvl9lG3qIw&s','tuz'],
-
-        // Meyve Suyu
-        ['8690947120035','Dimes Elma Suyu 1 L','Elma suyu (%100), Koruyucu (potasyum sorbat).','Alerjen içermez.','https://images.migrosone.com/sanalmarket/product/05000000/5000000_1-123456-1650x1650.jpg','meyve suyu'],
-        ['8690947120011','Dimes Portakal Suyu 1 L','Portakal suyu (%100), Koruyucu (potasyum sorbat).','Alerjen içermez.','https://images.migrosone.com/sanalmarket/product/05000001/5000001_1-789012-1650x1650.jpg','meyve suyu']
+        ['8681856394141','Mayi Tuz Öğütülmüş Sofra Tuzu (İyot İlaveli) 2000 gr','%100 doğal Kaynak Tuzu, Potasyum İyodat.','Alerjen içermez.','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUXdaDr_EaSD2JhDcZBemNcsxPvl9lG3qIw&s','tuz']
     ];
 
     // 1. Kategorileri Topla ve Veritabanına Ekle
