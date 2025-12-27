@@ -18,13 +18,12 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $barcode = $input['barcode'] ?? '';
 $product_name = $input['product_name'] ?? '';
-$category = $input['category'] ?? '';
 $brand = $input['brand'] ?? '';
 $user_note = $input['user_note'] ?? '';
 $ingredients = $input['ingredients'] ?? '';
 
-if (empty($barcode) || empty($product_name) || empty($category)) {
-    echo json_encode(['success' => false, 'message' => 'Barkod, ürün adı ve kategori alanları zorunludur'], JSON_UNESCAPED_UNICODE);
+if (empty($barcode)) {
+    echo json_encode(['success' => false, 'message' => 'Barkod alanı zorunludur'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -34,19 +33,17 @@ try {
         CREATE TABLE IF NOT EXISTS product_requests (
             id INT AUTO_INCREMENT PRIMARY KEY,
             barcode VARCHAR(50) NOT NULL,
-            product_name VARCHAR(255) NOT NULL,
-            category VARCHAR(100) NOT NULL,
+            product_name VARCHAR(255),
             brand VARCHAR(100),
-            ingredients TEXT,
             user_note TEXT,
+            ingredients TEXT,
             status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
             requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             reviewed_at TIMESTAMP NULL,
             reviewed_by VARCHAR(100) NULL,
             admin_note TEXT NULL,
             INDEX idx_barcode (barcode),
-            INDEX idx_status (status),
-            INDEX idx_category (category)
+            INDEX idx_status (status)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
     
@@ -70,10 +67,10 @@ try {
     
     // Yeni talep kaydet
     $stmt = $pdo->prepare("
-        INSERT INTO product_requests (barcode, product_name, category, brand, ingredients, user_note) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO product_requests (barcode, product_name, brand, user_note, ingredients) 
+        VALUES (?, ?, ?, ?, ?)
     ");
-    $stmt->execute([$barcode, $product_name, $category, $brand, $ingredients, $user_note]);
+    $stmt->execute([$barcode, $product_name, $brand, $user_note, $ingredients]);
     $request_id = $pdo->lastInsertId();
     
     echo json_encode([

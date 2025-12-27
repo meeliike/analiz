@@ -1,304 +1,188 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paketli Gıda Analiz Sistemi</title>
+    <title>Paketli Gıdalarda İçerik Analizi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --color-primary: #AED8CC;
-            --color-accent: #CD6688;
-            --color-dark: #7A016F;
-            --color-darkest: #461959;
+            --bg-body: #f8f9fa;
+            --text-body: #212529;
+            --bg-card: #ffffff;
+            --border-color: #dee2e6;
+            --primary-color: #AED8CC;
+            --accent-color: #CD6688;
+            --dark-color: #7A016F;
+            --hero-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --text-body: #f8f9fa;
+            --bg-card: #1E1E1E;
+            --border-color: #333333;
+            --primary-color: #5c7cfa;
+            --accent-color: #ff8787;
+            --dark-color: #1a1a1a;
+            --hero-bg: #1E1E1E;
+        }
+        
+        [data-theme="dark"] .text-muted {
+            color: #adb5bd !important;
+        }
+
+        [data-theme="dark"] .form-control {
+            background-color: #2d2d2d;
+            border-color: #404040;
+            color: #fff;
+        }
+        
+        [data-theme="dark"] .form-control::placeholder {
+            color: #a0a0a0;
         }
 
         body {
-            background: linear-gradient(135deg, #AED8CC 0%, #f0f8f5 100%);
-            color: var(--color-darkest);
-            min-height: 100vh;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            transition: background-color 0.3s, color 0.3s;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .navbar {
-            background-color: var(--color-darkest) !important;
-            padding: 0.75rem 0;
-            box-shadow: 0 2px 4px rgba(70, 25, 89, 0.2);
-        }
-
-        .navbar-brand {
-            color: var(--color-primary) !important;
-            font-weight: bold;
-            font-size: 1.3rem;
-        }
-
-        .hamburger-menu {
-            background: none;
-            border: none;
-            color: var(--color-primary);
-            font-size: 1.5rem;
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .hamburger-menu:hover {
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .side-panel {
-            position: fixed;
-            left: -350px;
-            top: 0;
-            width: 350px;
-            height: 100vh;
-            background-color: var(--color-darkest);
-            color: var(--color-primary);
-            z-index: 1000;
-            transition: left 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .side-panel.active {
-            left: 0;
-        }
-
-        .side-panel-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .side-panel-overlay.active {
-            display: block;
-        }
-
-        .side-panel h3 {
-            color: var(--color-primary);
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--color-primary);
-            padding-bottom: 1rem;
-        }
-
-        .side-panel-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--color-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .search-bar {
-            cursor: pointer;
-            background-color: white;
-            border: 2px solid var(--color-dark);
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            width: 100%;
-            max-width: 600px;
-            margin: 1rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(70, 25, 89, 0.1);
-        }
-
-        .search-input-container {
-            display: none;
-            flex: 1;
-            margin-right: 1rem;
-        }
-
-        .search-input-container.active {
-            display: block;
-        }
-
-        .search-input-container input {
-            border: none;
-            outline: none;
-            width: 100%;
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .search-button {
-            background: none;
-            border: none;
-            color: var(--color-darkest);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .search-button:hover {
-            color: var(--color-accent);
-        }
-
-        .camera-button {
-            background-color: var(--color-accent);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            margin-left: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .camera-button:hover {
-            background-color: var(--color-dark);
-        }
-
-        .camera-container {
-            display: none;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .camera-container.active {
-            display: block;
-        }
-
-        #video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 15px;
-            border: 3px solid var(--color-dark);
-            background-color: #000;
-        }
-
-        .main-container {
+            background-color: var(--dark-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             padding: 1rem 0;
         }
 
-        .card {
-            background-color: white;
-            border: 2px solid var(--color-dark);
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(70, 25, 89, 0.1);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            height: 100%;
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
         }
 
-        #categoriesList {
-            max-height: 400px;
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .category-list {
+            max-height: 75vh;
             overflow-y: auto;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-accent) 100%);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-bottom: none;
-        }
-
-        .card-header h5 {
-            margin: 0;
-            font-weight: bold;
-        }
-
         .category-item {
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
             cursor: pointer;
             transition: all 0.2s;
-        }
-
-        .category-item:hover {
-            background-color: var(--color-primary);
-        }
-
-        .category-item.active {
-            background-color: var(--color-accent);
-            color: white;
-        }
-
-        .product-item {
+            border-left: 4px solid transparent;
             padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-            cursor: pointer;
-            transition: all 0.2s;
+            color: var(--text-body);
+            text-decoration: none;
+            display: block;
+        }
+
+        .category-item:hover, .category-item.active {
+            background-color: rgba(205, 102, 136, 0.1);
+            border-left-color: var(--accent-color);
+        }
+
+        /* Search within Navbar */
+        .navbar-search {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .navbar-search input {
+            padding-right: 80px;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .navbar-search .search-actions {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background-color: var(--hero-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            height: 60px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            padding-left: 1.5rem;
+            padding-right: 120px;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-card);
+            color: var(--text-body);
+        }
+
+        .search-input:focus {
+            background-color: var(--bg-card);
+            color: var(--text-body);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+        }
+
+        .search-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-search-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-        }
-
-        .product-item:hover {
-            background-color: var(--color-primary);
-        }
-
-        .product-item img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 1rem;
-            border: 2px solid var(--color-dark);
-        }
-
-        .product-item-content {
-            flex: 1;
-        }
-
-        .news-card {
-            padding: 1.5rem;
-        }
-
-        .news-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--color-darkest);
-            margin-bottom: 0.5rem;
-        }
-
-        .news-content {
-            color: #6c757d;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .news-date {
-            font-size: 0.85rem;
-            color: var(--color-accent);
-        }
-
-        .btn-refresh {
-            background-color: var(--color-accent);
+            justify-content: center;
             border: none;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            margin-top: 1rem;
+            transition: transform 0.2s;
         }
 
-        .btn-refresh:hover {
-            background-color: var(--color-dark);
-            transform: translateY(-2px);
+        .btn-search-action:hover {
+            transform: scale(1.1);
         }
 
-        .product-detail-card {
+        /* Product Panel */
+        .product-panel {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: none;
-            margin-top: 2rem;
         }
 
-        .product-detail-card.active {
+        .product-panel.visible {
             display: block;
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .score-circle {
@@ -312,761 +196,609 @@
             font-weight: bold;
             margin: 0 auto;
             border: 6px solid;
-            color: var(--color-darkest);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .score-high {
-            background-color: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-
-        .score-medium {
-            background-color: #fff3cd;
-            border-color: #ffc107;
-            color: #856404;
-        }
-
-        .score-low {
-            background-color: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
-        }
-
-        .risk-badge {
-            background-color: var(--color-accent);
-            color: white;
-            padding: 0.25rem 0.75rem;
+        .purpose-panel {
+            background-color: rgba(174, 216, 204, 0.1);
+            border: 1px solid var(--primary-color);
             border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-block;
-            margin: 0.25rem;
-        }
-
-        .risk-badge:hover {
-            background-color: var(--color-dark);
-        }
-
-        .ingredient-item {
-            padding: 0.5rem;
-            margin: 0.25rem 0;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-        }
-
-        .risk-detail {
-            background-color: #fff3f8;
-            border-left: 4px solid var(--color-accent);
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .risk-detail.show {
-            display: block;
-        }
-
-        footer {
-            background-color: var(--color-darkest);
-            color: var(--color-primary);
-            padding: 1.5rem 0;
+            padding: 1.5rem;
             margin-top: 2rem;
-            text-align: center;
+        }
+        
+        [data-theme="dark"] .purpose-panel {
+             background-color: rgba(58, 80, 107, 0.2);
         }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        .camera-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
             display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .loading.active {
-            display: block;
+        .camera-modal {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #interactive.viewport {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 15px;
+            border: 2px solid var(--accent-color);
+            background: #000;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        #interactive.viewport > video, #interactive.viewport > canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .news-img {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .daily-info-section {
+            margin-top: auto;
+            padding-top: 2rem;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <button class="hamburger-menu" id="hamburgerMenu" title="Gelecekte eklenecek ikinci kısım">
-                <i class="bi bi-list"></i>
-            </button>
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-shield-check"></i> Paketli Gıda Analiz Sistemi
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#" onclick="location.reload()">
+                <i class="bi bi-shield-check me-2"></i>
+                Paketli Gıdalarda İçerik Analizi
             </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Search Bar Integrated in Navbar -->
+                <form class="d-flex mx-auto navbar-search my-2 my-lg-0" onsubmit="handleSearch(event, 'navbarInput')">
+                    <input class="form-control" type="search" id="navbarInput" placeholder="Barkod veya Ürün Adı..." aria-label="Search">
+                    <div class="search-actions">
+                        <button class="btn btn-sm btn-light rounded-circle" type="button" onclick="handleSearch(event, 'navbarInput')" title="Ara">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning rounded-circle" type="button" id="navbarScanBtn" title="Barkod Tara">
+                            <i class="bi bi-upc-scan"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showHero()"><i class="bi bi-house-door me-1"></i> Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#news-section"><i class="bi bi-newspaper me-1"></i> Haberler</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-outline-light rounded-circle" id="darkModeToggle">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <!-- Sol Panel -->
-    <div class="side-panel-overlay" id="sidePanelOverlay"></div>
-    <div class="side-panel" id="sidePanel">
-        <button class="side-panel-close" id="sidePanelClose">
-            <i class="bi bi-x-lg"></i>
-        </button>
-        <h3>İkinci Özellik</h3>
-        <p>Bu bölüm gelecekte eklenecek ikinci özellik için hazırlanmıştır.</p>
-    </div>
-
-    <!-- Barkod Arama Çubuğu -->
-    <div class="container-fluid">
-        <div class="search-bar">
-            <div class="search-input-container" id="searchInputContainer">
-                <input type="text" id="barcodeInput" placeholder="Barkod numarası veya ürün adı girin..." onkeypress="handleBarcodeEnter(event)">
-            </div>
-            <button class="search-button" id="searchButton" title="Ara">
-                <i class="bi bi-search"></i>
-            </button>
-            <button class="camera-button" id="cameraButton" title="Kamera ile Tara">
-                <i class="bi bi-camera"></i>
-            </button>
-        </div>
-        <div class="camera-container" id="cameraContainer">
-            <video id="video" autoplay playsinline></video>
-            <div class="mt-2">
-                <button class="btn btn-sm btn-primary" id="captureBtn">Yakala</button>
-                <button class="btn btn-sm btn-secondary" id="stopBtn">Durdur</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ana İçerik - İki Kolon -->
-    <div class="container-fluid main-container">
-        <div class="row">
-            <!-- Sol Kolon: Kategoriler ve Ürünler -->
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5><i class="bi bi-grid"></i> Kategoriler</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="loading" id="categoriesLoading">
-                                    <div class="spinner-border text-primary" role="status"></div>
-                                </div>
-                                <div id="categoriesList"></div>
-                            </div>
-                        </div>
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row g-4">
+            <!-- Left Column: Categories -->
+            <div class="col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-bottom py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-grid-fill me-2" style="color: var(--accent-color);"></i>Kategoriler</h5>
                     </div>
-                    <div class="col-md-7">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5><i class="bi bi-box"></i> Ürünler</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="productsList">
-                                    <div class="p-3 text-center text-muted">
-                                        Kategori seçiniz
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sağ Kolon: Haberler -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="bi bi-newspaper"></i> Gıda Sektörü Haberleri</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="loading" id="newsLoading">
+                    <div class="card-body p-0 category-list" id="categoriesList">
+                        <div class="text-center p-4">
                             <div class="spinner-border text-primary" role="status"></div>
                         </div>
-                        <div class="news-card" id="newsCard">
-                            <div class="news-title" id="newsTitle"></div>
-                            <div class="news-content" id="newsContent"></div>
-                            <div class="news-date" id="newsDate"></div>
-                        </div>
-                        <button class="btn-refresh" id="refreshNews">
-                            <i class="bi bi-arrow-clockwise"></i> Yeni Haber
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Ürün Detay Kartı -->
-    <div class="container-fluid">
-        <div class="card product-detail-card" id="productDetailCard">
-            <div class="card-header">
-                <h4 class="mb-0" id="productName"></h4>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 text-center">
-                        <img id="productImage" src="" alt="Ürün" class="img-fluid mb-3" style="max-height: 300px; border-radius: 15px;">
-                        <div class="category-badge" id="productCategory" style="background-color: var(--color-primary); color: var(--color-darkest); padding: 0.5rem 1rem; border-radius: 20px;"></div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="text-center mb-4">
-                            <div class="score-circle" id="scoreCircle">
-                                <span id="scoreValue"></span>
+            <!-- Right Column: Hero / Product Panel -->
+            <div class="col-lg-9 position-relative">
+                
+                <!-- Hero Section (Default) -->
+                <div id="heroSection" class="hero-section h-100 shadow-sm border">
+                    <!-- Search Bar -->
+                    <div class="search-container mb-4">
+                        <form onsubmit="handleSearch(event, 'heroSearchInput')">
+                            <input type="text" class="form-control search-input" id="heroSearchInput" placeholder="Ürün adı veya barkod...">
+                            <div class="search-actions">
+                                <button type="button" class="btn-search-action btn-primary text-white" onclick="handleSearch(event, 'heroSearchInput')" title="Ara">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <button type="button" class="btn-search-action btn-warning text-dark" id="heroScanBtn" title="Barkod Tara">
+                                    <i class="bi bi-upc-scan"></i>
+                                </button>
                             </div>
-                            <p class="mt-2"><strong>Sağlık Skoru</strong></p>
+                        </form>
+                    </div>
+
+                    <!-- Promo Text -->
+                    <div class="mb-3">
+                        <span class="display-4 fw-bold">🥗</span>
+                    </div>
+                    <h2 class="fw-bold mb-3" style="color: var(--accent-color);">Sağlıklı Tercihler İçin Analiz Edin</h2>
+                    <p class="lead mb-4" style="color: var(--text-body);">
+                        ✨ Merak ettiğiniz ürünün içeriğini öğrenmek için barkodu kameraya gösterin veya ürün adı/barkod numarası ile arama yapın 📸 🔍
+                    </p>
+
+                    <!-- Purpose Panel -->
+                  
+                </div>
+
+                <!-- Product Panel (Dynamic) -->
+                <div id="productPanel" class="product-panel card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4" id="productContent">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+  
+        <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: 25px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(174, 216, 204, 0.1) 100%);">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-shield-shaded display-4 text-primary me-3"></i>
+                        <h2 class="fw-bold mb-0">Vizyon ve Misyonumuz</h2>
+                    </div>
+                    
+                    <div class="mission-text fs-5" style="line-height: 1.8; color: var(--text-body);">
+                        <h4 class="fw-bold text-accent mb-3">Sağlıklı Yarınlar, Şeffaf İçeriklerle Başlar</h4>
+                        <p>Market rafları rengârenk ambalajlarla dolu. Ama asıl önemli olan, o ambalajların arkasındaki küçük yazılar. Çünkü sağlığımızı belirleyen şey reklamlar değil, içindekiler listesi. <strong>Paketli Gıda Analiz Sistemi</strong>, gıdayı üreticinin anlattığı gibi değil, gerçekte olduğu gibi görmenizi sağlar.</p>
+                        
+                        <p>Bir barkod taramasıyla, tükettiğiniz ürünün içeriğini çözümler, riskleri açıkça ortaya koyar ve sizi bilinçli tercihlere yönlendirir. Gizli kalmış kimyasalları, belirsiz ifadeleri ve sağlığınızı etkileyebilecek bileşenleri sizin için görünür hâle getiririz.</p>
+
+                        <div class="row mt-5">
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold text-primary"><i class="bi bi-check2-circle me-2"></i>Temiz İçerik Bizim İçin Ne Demek?</h5>
+                                <p class="small">Biz “temiz içerik” kavramını pazarlama terimi olarak görmüyoruz. Temiz içerik; vücudun tanıdığı, mantığın kabul ettiği ve şeffafça üretilmiş gıdadır. Ev mutfağında yeri olmayan yüksek fruktozlu mısır şurubu, yapay tatlandırıcılar ve trans yağlar gibi bileşenlerin ürünlerde yer almaması gerekir.</p>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold text-primary"><i class="bi bi-question-circle me-2"></i>Neden Bu Sistemi Kurduk?</h5>
+                                <p class="small">Çünkü gıda etiketleri bilerek karmaşık yazılıyor. “Doğal”, “sağlıklı” gibi ifadeler çoğu zaman gerçeği yansıtmıyor. Bu sistemi, tüketicinin kontrolü yeniden eline alması için kurduk. Bu bir yasaklama platformu değil; bilgiyle güçlendirilmiş bilinçli seçim aracıdır.</p>
+                            </div>
                         </div>
-                        <h5><i class="bi bi-list-ul"></i> İçindekiler</h5>
-                        <div id="ingredientsList"></div>
+
+                        <div class="alert alert-success border-0 shadow-sm mt-4 text-center py-3" style="border-radius: 15px;">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-heart-fill text-danger me-2"></i>Sizin sağlığınız, bizim kırmızı çizgimizdir.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  <!-- News Section -->
+    <div class="container mb-5" id="news-section">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold"><i class="bi bi-newspaper me-2"></i>Gıda Gündemi</h3>
+                    <button class="btn btn-outline-primary rounded-pill" onclick="fetchRandomNews()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Yeni Haber Getir
+                    </button>
+                </div>
+                <div class="container my-5">
+                <div class="card border-0 shadow-sm overflow-hidden" id="newsCardContainer">
+                    <!-- News Item -->
+                    <div class="text-center p-5">
+                        <div class="spinner-border text-secondary" role="status"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer>
+    <!-- Daily Info Section -->
+    <div class="daily-info-section bg-transparent py-4">
         <div class="container">
-            <p class="mb-0">&copy; 2025 Paketli Gıda Analiz Sistemi</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm" style="border-left: 6px solid var(--accent-color);">
+                        <div class="card-body p-4 d-flex align-items-center">
+                            <div class="flex-shrink-0 me-4">
+                                <i class="bi bi-lightbulb-fill display-4 text-warning"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Günün Bilgisi</h5>
+                                <p class="mb-0 text-muted fs-5">
+                                    Paketli gıdalarda "E" kodu ile başlayan katkı maddelerinin hepsi zararlı değildir; örneğin E300 C vitaminidir. Etiket okumayı alışkanlık haline getirin! 🏷️
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-muted mt-5 border-top">
+        <div class="container">
+            <small>&copy; 2025 Gıda Analiz Platformu. Tüm hakları saklıdır.</small>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="barcode_scanner.js"></script>
-    <script>
-        let stream = null;
-        let selectedCategoryId = null;
+    <!-- Camera Overlay -->
+    <div id="cameraOverlay" class="camera-overlay">
+        <div class="camera-modal text-center">
+            <h3 class="mb-3 fw-bold" style="color: var(--text-body);">Barkodu Okutun</h3>
+            <p class="text-muted small mb-3">Kamerayı barkoda yaklaştırın</p>
+            
+            <div id="interactive" class="viewport mx-auto"></div>
+            
+            <button class="btn btn-danger rounded-pill px-4" id="closeCameraBtn">
+                <i class="bi bi-x-lg me-2"></i>Kapat
+            </button>
+        </div>
+    </div>
 
-        // Sayfa yüklendiğinde
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    
+    <!-- Barcode Scanner Logic -->
+    <script src="barcode_scanner.js"></script>
+
+    <script>
+        // Main Logic
         document.addEventListener('DOMContentLoaded', () => {
             loadCategories();
-            loadNews();
-        });
-
-        // Hamburger menü
-        const hamburgerMenu = document.getElementById('hamburgerMenu');
-        const sidePanel = document.getElementById('sidePanel');
-        const sidePanelOverlay = document.getElementById('sidePanelOverlay');
-        const sidePanelClose = document.getElementById('sidePanelClose');
-
-        hamburgerMenu.addEventListener('click', () => {
-            sidePanel.classList.add('active');
-            sidePanelOverlay.classList.add('active');
-        });
-
-        sidePanelClose.addEventListener('click', () => {
-            sidePanel.classList.remove('active');
-            sidePanelOverlay.classList.remove('active');
-        });
-
-        sidePanelOverlay.addEventListener('click', () => {
-            sidePanel.classList.remove('active');
-            sidePanelOverlay.classList.remove('active');
-        });
-
-        // Arama çubuğuna tıklayınca input açılsın
-        const searchBar = document.querySelector('.search-bar');
-        const searchButton = document.getElementById('searchButton');
-        const searchInputContainer = document.getElementById('searchInputContainer');
-
-        searchBar.addEventListener('click', (e) => {
-            // Butonlara tıklanırsa özel işlemler yapılsın
-            if (e.target.closest('.search-button') || e.target.closest('.camera-button')) {
-                return;
+            fetchRandomNews();
+            setupDarkMode();
+            
+            // Scanner Button
+            const heroScanBtn = document.getElementById('heroScanBtn');
+            const navbarScanBtn = document.getElementById('navbarScanBtn');
+            
+            if(heroScanBtn && typeof startScanner === 'function') {
+                heroScanBtn.addEventListener('click', () => startScanner('heroSearchInput'));
             }
-            searchInputContainer.classList.add('active');
-            document.getElementById('barcodeInput').focus();
-        });
-
-        // Arama butonu
-        searchButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchInputContainer.classList.toggle('active');
-            if (searchInputContainer.classList.contains('active')) {
-                document.getElementById('barcodeInput').focus();
+            if(navbarScanBtn && typeof startScanner === 'function') {
+                navbarScanBtn.addEventListener('click', () => startScanner('navbarInput'));
             }
         });
 
-        // Barkod Enter tuşu
-        function handleBarcodeEnter(event) {
-            if (event.key === 'Enter') {
-                const barcode = document.getElementById('barcodeInput').value.trim();
-                if (barcode) {
-                    scanProduct(barcode);
+        // Toggle Views
+        function showHero() {
+            document.getElementById('productPanel').classList.remove('visible');
+            setTimeout(() => {
+                document.getElementById('productPanel').style.display = 'none';
+                document.getElementById('heroSection').style.display = 'block';
+                // Trigger reflow for animation if needed, but display block is instant
+                document.getElementById('heroSection').style.opacity = '1';
+            }, 300);
+        }
+
+        function showPanel() {
+            const hero = document.getElementById('heroSection');
+            const panel = document.getElementById('productPanel');
+            
+            hero.style.display = 'none';
+            panel.style.display = 'block';
+            
+            // Force reflow
+            void panel.offsetWidth;
+            
+            panel.classList.add('visible');
+        }
+
+        // Search Handler
+        function handleSearch(e, inputId) {
+            e.preventDefault();
+            const query = document.getElementById(inputId).value.trim();
+            if(query) {
+                // Determine if barcode (digits only) or name
+                const isBarcode = /^\d+$/.test(query);
+                if(isBarcode) {
+                    showProductPanel(query, 'barcode');
+                } else {
+                    showProductPanel(query, 'search'); // Using search type
                 }
             }
         }
 
-        // Kamera butonu - Barkod tarayıcı kullan
-        document.getElementById('cameraButton').addEventListener('click', async () => {
-            const video = document.getElementById('video');
-            const cameraContainer = document.getElementById('cameraContainer');
+        // Dark Mode
+        function setupDarkMode() {
+            const toggle = document.getElementById('darkModeToggle');
+            const html = document.documentElement;
+            const icon = toggle.querySelector('i');
             
-            if (window.barcodeScanner && window.barcodeScanner.isScanning) {
-                // Zaten tarama yapılıyorsa durdur
-                window.barcodeScanner.stopScanning();
-                cameraContainer.classList.remove('active');
-            } else {
-                // Yeni tarama başlat
-                try {
-                    await window.barcodeScanner.startScanning(
-                        video,
-                        (barcode) => {
-                            // Barkod okundu
-                            document.getElementById('barcodeInput').value = barcode;
-                            scanProduct(barcode);
-                            window.barcodeScanner.stopScanning();
-                            cameraContainer.classList.remove('active');
-                        },
-                        (error) => {
-                            alert('Kamera hatası: ' + error.message);
-                            cameraContainer.classList.remove('active');
-                        }
-                    );
-                    cameraContainer.classList.add('active');
-                } catch (error) {
-                    alert('Kamera izni verilmedi: ' + error.message);
-                }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                icon.classList.replace('bi-moon-stars', 'bi-sun');
             }
-        });
 
-        // Yakala butonu - direkt input açılsın
-        document.getElementById('captureBtn').addEventListener('click', () => {
-            document.getElementById('searchInputContainer').classList.add('active');
-            const input = document.getElementById('barcodeInput');
-            input.focus();
-            input.select();
-            if (window.barcodeScanner) {
-                window.barcodeScanner.stopScanning();
-            }
-            document.getElementById('cameraContainer').classList.remove('active');
-        });
-
-        // Durdur butonu
-        document.getElementById('stopBtn').addEventListener('click', () => {
-            if (window.barcodeScanner) {
-                window.barcodeScanner.stopScanning();
-            }
-            document.getElementById('cameraContainer').classList.remove('active');
-        });
-
-        function stopCamera() {
-            // ZXing taramayı durdur
-            if (window.barcodeScanner) {
-                window.barcodeScanner.stopScanning();
-            }
-            
-            // Eski stream'i temizle (geriye dönük uyumluluk)
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            
-            document.getElementById('cameraContainer').classList.remove('active');
+            toggle.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme');
+                const newTheme = current === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                icon.classList.replace(
+                    newTheme === 'dark' ? 'bi-moon-stars' : 'bi-sun',
+                    newTheme === 'dark' ? 'bi-sun' : 'bi-moon-stars'
+                );
+            });
         }
 
-        // Kategorileri yükle
+        // Categories
         async function loadCategories() {
-            const loading = document.getElementById('categoriesLoading');
-            const container = document.getElementById('categoriesList');
-            
-            loading.classList.add('active');
-            
             try {
                 const response = await fetch('categories.php');
                 const data = await response.json();
                 
-                console.log('Kategori yanıtı:', data); // Debug
+                const list = document.getElementById('categoriesList');
+                list.innerHTML = '';
                 
                 if (data.basari && data.kategoriler) {
-                    displayCategories(data.kategoriler);
-                } else {
-                    container.innerHTML = `<div class="p-3 text-danger">Kategori yüklenemedi: ${data.hata || 'Bilinmeyen hata'}</div>`;
-                    console.error('Kategori hatası:', data);
+                    data.kategoriler.forEach(cat => {
+                        const a = document.createElement('a');
+                        a.className = 'category-item d-flex justify-content-between align-items-center';
+                        a.innerHTML = `
+                            <span class="fw-medium">${cat.isim}</span>
+                            <span class="badge bg-secondary rounded-pill">${cat.urun_sayisi || 0}</span>
+                        `;
+                        a.onclick = (e) => {
+                            e.preventDefault();
+                            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                            a.classList.add('active');
+                            showProductPanel(cat.id, 'category');
+                        };
+                        list.appendChild(a);
+                    });
                 }
-            } catch (error) {
-                container.innerHTML = `<div class="p-3 text-danger">Kategoriler yüklenemedi: ${error.message}</div>`;
-                console.error('Fetch hatası:', error);
-            } finally {
-                loading.classList.remove('active');
+            } catch (e) {
+                console.error('Kategori hatası:', e);
+                document.getElementById('categoriesList').innerHTML = '<div class="text-danger p-3">Kategoriler yüklenemedi.</div>';
             }
         }
 
-        // Kategorileri göster
-        function displayCategories(kategoriler) {
-            const container = document.getElementById('categoriesList');
-            container.innerHTML = '';
-            
-            if (kategoriler.length === 0) {
-                container.innerHTML = '<div class="p-3 text-muted text-center">Kategori bulunamadı</div>';
-                return;
-            }
-            
-            kategoriler.forEach(kategori => {
-                const item = document.createElement('div');
-                item.className = 'category-item';
-                item.innerHTML = `
-                    <strong>${escapeHtml(kategori.isim)}</strong>
-                    <span class="badge bg-secondary float-end">${kategori.urun_sayisi}</span>
-                `;
-                item.addEventListener('click', () => {
-                    // Aktif kategoriyi işaretle
-                    document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
-                    item.classList.add('active');
-                    selectedCategoryId = kategori.id;
-                    loadProducts(kategori.id);
-                });
-                container.appendChild(item);
-            });
-        }
-
-        // Ürünleri yükle
-        async function loadProducts(categoryId) {
-            const container = document.getElementById('productsList');
-            container.innerHTML = '<div class="p-3 text-center"><div class="spinner-border spinner-border-sm"></div></div>';
+        // News
+        async function fetchRandomNews() {
+            const container = document.getElementById('newsCardContainer');
+            // Show Spinner
+            container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>';
             
             try {
-                const response = await fetch(`products.php?category_id=${categoryId}`);
-                const data = await response.json();
-                
-                if (data.basari && data.urunler) {
-                    displayProducts(data.urunler);
-                } else {
-                    container.innerHTML = '<div class="p-3 text-muted text-center">Ürün bulunamadı</div>';
-                }
-            } catch (error) {
-                container.innerHTML = '<div class="p-3 text-danger">Ürünler yüklenemedi</div>';
-            }
-        }
-
-        // Ürünleri göster
-        function displayProducts(urunler) {
-            const container = document.getElementById('productsList');
-            container.innerHTML = '';
-            
-            if (urunler.length === 0) {
-                container.innerHTML = '<div class="p-3 text-muted text-center">Bu kategoride ürün yok</div>';
-                return;
-            }
-            
-            urunler.forEach(urun => {
-                const item = document.createElement('div');
-                item.className = 'product-item';
-                const imageUrl = urun.gorsel_url || 'https://via.placeholder.com/60x60?text=Ürün';
-                item.innerHTML = `
-                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(urun.isim)}">
-                    <div class="product-item-content">
-                        <strong>${escapeHtml(urun.isim)}</strong>
-                        <div class="text-muted small">${escapeHtml(urun.kategori_adi || '')}</div>
-                    </div>
-                `;
-                item.addEventListener('click', () => {
-                    scanProduct(urun.barkod);
-                });
-                container.appendChild(item);
-            });
-        }
-
-        // Haberleri yükle
-        async function loadNews() {
-            const loading = document.getElementById('newsLoading');
-            loading.classList.add('active');
-            
-            try {
-                const response = await fetch('news.php');
+                // Add timestamp to prevent caching
+                const response = await fetch('news.php?t=' + new Date().getTime());
                 const data = await response.json();
                 
                 if (data.basari && data.haber) {
-                    displayNews(data.haber);
-                }
-            } catch (error) {
-                console.error('Haber yüklenemedi:', error);
-            } finally {
-                loading.classList.remove('active');
-            }
-        }
-
-        // Haberi göster
-        function displayNews(haber) {
-            document.getElementById('newsTitle').textContent = haber.baslik;
-            document.getElementById('newsContent').textContent = haber.icerik;
-            document.getElementById('newsDate').textContent = 'Tarih: ' + haber.tarih;
-        }
-
-        // Haber yenile butonu
-        document.getElementById('refreshNews').addEventListener('click', loadNews);
-
-        // Ürün tarama (barkod veya isim ile) - Barkod tarayıcı entegrasyonu
-        async function scanProduct(searchTerm) {
-            document.getElementById('productDetailCard').classList.remove('active');
-            
-            if (!searchTerm || searchTerm.trim() === '') {
-                return;
-            }
-            
-            // Barkod tarayıcı modülünü kullan
-            if (typeof scanAndSearchProduct !== 'undefined') {
-                await scanAndSearchProduct(searchTerm.trim());
-            } else {
-                // Fallback: Eski yöntem
-                try {
-                    const response = await fetch(`product.php?barcode=${encodeURIComponent(searchTerm.trim())}`);
-                    const data = await response.json();
-                    
-                    if (data.hata) {
-                        // Ürün bulunamadı - talep gönderme seçeneği sun
-                        showProductNotFound(searchTerm.trim(), data.hata);
-                        return;
-                    }
-                    
-                    displayProductDetail(data);
-                } catch (error) {
-                    alert('API hatası: ' + error.message);
-                }
-            }
-            
-            document.getElementById('barcodeInput').value = '';
-        }
-
-        // Ürün bulunamadı paneli
-        function showProductNotFound(barcode, errorMessage) {
-            const container = document.getElementById('productDetailCard');
-            container.innerHTML = `
-                <div class="card-header">
-                    <h4 class="mb-0">Ürün Bulunamadı</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle"></i> 
-                        <strong>Barkod:</strong> ${escapeHtml(barcode)}<br>
-                        <small>${escapeHtml(errorMessage)}</small>
-                    </div>
-                    
-                    <h5>Bu ürünü sisteme eklemek ister misiniz?</h5>
-                    <p>Ürün bilgilerini girerek moderator onayına gönderebilirsiniz. Onaylandıktan sonra ürün sistemde görünecektir.</p>
-                    
-                    <form id="productRequestForm">
-                        <div class="mb-3">
-                            <label class="form-label">Ürün Adı <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="requestProductName" placeholder="Ürünün adını girin..." required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                            <select class="form-control" id="requestCategory" required>
-                                <option value="">Kategori seçin...</option>
-                                <option value="çikolata">Çikolata</option>
-                                <option value="sakız">Sakız</option>
-                                <option value="yağ">Yağ</option>
-                                <option value="bisküvi">Bisküvi</option>
-                                <option value="tuz">Tuz</option>
-                                <option value="meyve suyu">Meyve Suyu</option>
-                                <option value="enerji içeceği">Enerji İçeceği</option>
-                                <option value="diğer">Diğer</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Marka</label>
-                            <input type="text" class="form-control" id="requestBrand" placeholder="Marka adını girin...">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">İçindekiler</label>
-                            <textarea class="form-control" id="requestIngredients" rows="3" placeholder="İçindekiler listesini girin..."></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notunuz (isteğe bağlı)</label>
-                            <textarea class="form-control" id="requestNote" rows="2" placeholder="Eklemek istediğiniz notlar..."></textarea>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send"></i> Talep Gönder
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('productDetailCard').classList.remove('active')">
-                                <i class="bi bi-x"></i> İptal
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `;
-            container.classList.add('active');
-            
-            // Form gönderme olayı
-            document.getElementById('productRequestForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await submitProductRequest(barcode);
-            });
-        }
-
-        // Ürün talebini gönder
-        async function submitProductRequest(barcode) {
-            const formData = {
-                barcode: barcode,
-                product_name: document.getElementById('requestProductName').value,
-                category: document.getElementById('requestCategory').value,
-                brand: document.getElementById('requestBrand').value,
-                ingredients: document.getElementById('requestIngredients').value,
-                user_note: document.getElementById('requestNote').value
-            };
-            
-            try {
-                const response = await fetch('product_request.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Başarılı mesajı göster
-                    document.getElementById('productDetailCard').innerHTML = `
-                        <div class="card-header">
-                            <h4 class="mb-0">Talep Gönderildi</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-success">
-                                <i class="bi bi-check-circle"></i> 
-                                <strong>Talebiniz başarıyla gönderildi!</strong><br>
-                                <small>${result.message}</small>
+                    const h = data.haber;
+                    container.innerHTML = `
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="${h.gorsel || 'https://via.placeholder.com/400x300'}" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Haber Görseli">
                             </div>
-                            <button class="btn btn-primary" onclick="document.getElementById('productDetailCard').classList.remove('active')">
-                                <i class="bi bi-arrow-left"></i> Geri Dön
-                            </button>
+                            <div class="col-md-8">
+                                <div class="card-body p-4">
+                                    <h4 class="card-title fw-bold mb-3">${h.baslik}</h4>
+                                    <p class="card-text text-muted mb-4">${h.icerik}</p>
+                                    <p class="card-text"><small class="text-body-secondary"><i class="bi bi-calendar-event me-2"></i>${h.tarih}</small></p>
+                                </div>
+                            </div>
                         </div>
                     `;
-                } else {
-                    alert('Talep gönderilemedi: ' + result.message);
                 }
-            } catch (error) {
-                alert('İstek gönderilirken hata oluştu: ' + error.message);
+            } catch (e) {
+                container.innerHTML = '<div class="text-danger p-4 text-center">Haber yüklenirken bir hata oluştu.</div>';
             }
         }
 
-        // Ürün detayını göster
-        function displayProductDetail(data) {
-            console.log('Ürün detayı gösteriliyor:', data); // Debug
+        // Product Logic
+        // Exposed globally for barcode scanner
+        window.showProductPanel = async function(idOrBarcode, type) {
+            showPanel();
+            const content = document.getElementById('productContent');
+            content.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div><p class="mt-3">Yükleniyor...</p></div>';
             
-            document.getElementById('productName').textContent = data.urun_adi;
-            document.getElementById('productCategory').textContent = data.kategori || 'Kategori yok';
-            
-            const img = document.getElementById('productImage');
-            if (data.gorsel_url && data.gorsel_url.trim() !== '') {
-                // CORS ve hata yönetimi ile görsel yükleme
-                img.onerror = function() {
-                    // Görsel yüklenemezse placeholder göster
-                    this.src = 'https://via.placeholder.com/300x300?text=Görsel+Yüklenemedi';
-                    this.alt = 'Görsel yüklenemedi - URL erişilemiyor veya CORS hatası';
-                    console.warn('Görsel yüklenemedi:', data.gorsel_url, '- Olası nedenler: CORS politikası, geçersiz URL veya sunucu erişim sorunu');
-                };
-                img.onload = function() {
-                    console.log('Görsel başarıyla yüklendi:', data.gorsel_url);
-                };
-                // Cross-origin ayarı (CORS için)
-                img.crossOrigin = 'anonymous';
-                img.src = data.gorsel_url;
-            } else {
-                img.src = 'https://via.placeholder.com/300x300?text=Görsel+Yok';
-                img.alt = 'Ürün görseli bulunamadı';
+            // Set input value if coming from barcode scan
+            if(type === 'barcode') {
+                const heroInput = document.getElementById('heroSearchInput');
+                const navbarInput = document.getElementById('navbarInput');
+                if(heroInput) heroInput.value = idOrBarcode;
+                if(navbarInput) navbarInput.value = idOrBarcode;
             }
-            
-            // Skor
-            const scoreCircle = document.getElementById('scoreCircle');
-            const scoreValue = document.getElementById('scoreValue');
-            scoreValue.textContent = data.genel_skor;
-            
-            scoreCircle.classList.remove('score-high', 'score-medium', 'score-low');
-            if (data.genel_skor >= 70) {
-                scoreCircle.classList.add('score-high');
-            } else if (data.genel_skor >= 40) {
-                scoreCircle.classList.add('score-medium');
-            } else {
-                scoreCircle.classList.add('score-low');
-            }
-            
-            // İçindekiler - Paragraf mantığıyla göster
-            const ingredientsList = document.getElementById('ingredientsList');
-            ingredientsList.innerHTML = '';
-            
-            if (!data.icerikler || data.icerikler.length === 0) {
-                ingredientsList.innerHTML = '<p class="text-muted">İçerik bilgisi yok</p>';
-                return;
-            }
-            
-            // Paragraf container oluştur
-            const paragraph = document.createElement('div');
-            paragraph.className = 'ingredients-paragraph';
-            paragraph.style.cssText = 'line-height: 1.6; margin-bottom: 1rem;';
-            
-            const riskliIsimler = data.riskli_icerikler ? data.riskli_icerikler.map(r => r.isim) : [];
-            
-            data.icerikler.forEach((ingredient, index) => {
-                const isRiskli = riskliIsimler.some(riskli => 
-                    ingredient.toLowerCase().includes(riskli.toLowerCase()) || 
-                    riskli.toLowerCase().includes(ingredient.toLowerCase())
-                );
-                
-                // Virgül ekle (sonuncu hariç)
-                const separator = index < data.icerikler.length - 1 ? ', ' : '';
-                
-                if (isRiskli) {
-                    // Riskli içerik - sarı badge ile işaretle
-                    const span = document.createElement('span');
-                    span.className = 'risk-ingredient';
-                    span.style.cssText = 'background-color: #fff3cd; color: #856404; padding: 2px 6px; border-radius: 4px; cursor: pointer; border-bottom: 2px solid #ffc107; font-weight: 500;';
-                    span.textContent = ingredient;
-                    span.addEventListener('click', () => toggleRiskDetail(ingredient, span, data.riskli_icerikler));
-                    span.title = 'Detay için tıklayın';
-                    
-                    paragraph.appendChild(span);
-                    paragraph.appendChild(document.createTextNode(separator));
-                } else {
-                    // Normal içerik
-                    const span = document.createElement('span');
-                    span.textContent = ingredient + separator;
-                    paragraph.appendChild(span);
-                }
-            });
-            
-            ingredientsList.appendChild(paragraph);
-            
-            // Risk detayı container
-            const riskDetailContainer = document.createElement('div');
-            riskDetailContainer.id = 'riskDetailContainer';
-            ingredientsList.appendChild(riskDetailContainer);
-            
-            document.getElementById('productDetailCard').classList.add('active');
-            document.getElementById('productDetailCard').scrollIntoView({ behavior: 'smooth' });
-        }
 
-        // Risk detayı
-        function toggleRiskDetail(ingredient, parent, riskliIcerikler) {
-            const container = document.getElementById('riskDetailContainer');
-            
-            // Tüm detayları temizle
-            container.innerHTML = '';
-            
-            const riskInfo = riskliIcerikler.find(r => 
-                ingredient.toLowerCase().includes(r.isim.toLowerCase()) || 
-                r.isim.toLowerCase().includes(ingredient.toLowerCase())
-            );
-            
-            if (riskInfo) {
-                const detail = document.createElement('div');
-                detail.className = 'risk-detail-panel';
-                detail.style.cssText = 'background-color: #fff3f8; border-left: 4px solid var(--color-accent); padding: 1rem; margin-top: 1rem; border-radius: 8px; animation: slideDown 0.3s ease-out;';
+            try {
+                let url = '';
+                if (type === 'category') {
+                    url = `products.php?category_id=${idOrBarcode}`;
+                } else if (type === 'barcode') {
+                    url = `product.php?barcode=${idOrBarcode}`;
+                } else if (type === 'search') {
+                    // Search by name or barcode
+                    url = `product.php?name=${encodeURIComponent(idOrBarcode)}`;
+                }
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (type === 'category') {
+                    // List View
+                    if (data.basari && data.urunler && data.urunler.length > 0) {
+                        let html = `
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="fw-bold mb-0">Ürünler</h4>
+                                <span class="badge bg-primary rounded-pill">${data.urunler.length} Ürün</span>
+                            </div>
+                            <div class="list-group list-group-flush">
+                        `;
+                        
+                        data.urunler.forEach(prod => {
+                            html += `
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center p-3" onclick="showProductPanel('${prod.barkod}', 'barcode'); return false;">
+                                    <img src="${prod.gorsel_url || 'https://via.placeholder.com/60'}" class="rounded me-3 border" width="60" height="60" style="object-fit:cover;">
+                                    <div>
+                                        <div class="fw-bold fs-5">${prod.isim}</div>
+                                        <small class="text-muted">Barkod: ${prod.barkod}</small>
+                                    </div>
+                                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                                </a>
+                            `;
+                        });
+                        html += '</div>';
+                        content.innerHTML = html;
+                    } else {
+                        content.innerHTML = `
+                            <div class="text-center p-5">
+                                <i class="bi bi-inbox display-1 text-muted"></i>
+                                <h4 class="mt-3">Bu kategoride henüz ürün yok.</h4>
+                            </div>`;
+                    }
+                } else {
+                    // Detail View
+                    // Check if product exists (product.php returns direct object or error)
+                    if (data.hata) {
+                         renderAddProductPanel(idOrBarcode);
+                    } else if (data.urun_adi) {
+                        renderProductDetail(data);
+                    } else {
+                        // Fallback
+                        renderAddProductPanel(idOrBarcode);
+                    }
+                }
+
+            } catch (e) {
+                console.error(e);
+                content.innerHTML = `<div class="alert alert-danger">Bir hata oluştu: ${e.message}</div>`;
+            }
+        };
+
+       function renderProductDetail(prod) {
+    const content = document.getElementById('productContent');
+    
+    let scoreColor = 'bg-secondary';
+    if(prod.genel_skor >= 70) scoreColor = 'bg-success';
+    else if(prod.genel_skor >= 40) scoreColor = 'bg-warning';
+    else scoreColor = 'bg-danger';
+
+    // İçeriklerin tamamını liste halinde veya düzgün metin olarak bas
+    const icerikHTML = Array.isArray(prod.icerikler) 
+        ? prod.icerikler.map(item => `<span class="border rounded-pill px-2 py-1 me-1 mb-1 d-inline-block bg-white shadow-sm" style="font-size: 0.9rem;">${item}</span>`).join('')
+        : `<div class="p-2">${prod.icerikler || 'Bilgi yok'}</div>`;
+
+    // RİSKLİ İÇERİKLERİ NEDENLERİYLE BİRLİKTE BAS (Kritik Düzeltme)
+    const riskliHTML = (prod.riskli_icerikler && prod.riskli_icerikler.length > 0)
+        ? prod.riskli_icerikler.map(item => `
+            <div class="alert alert-danger d-flex align-items-start mb-2 shadow-sm border-start border-4 border-danger">
+                <i class="bi bi-exclamation-octagon-fill me-2 mt-1"></i>
+                <div>
+                    <strong class="d-block">${item.split('(')[0]}</strong> 
+                    <small class="d-block mt-1 opacity-75">${item.includes('(') ? item.substring(item.indexOf('(')) : ''}</small>
+                </div>
+            </div>`).join('')
+        : '<div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>Riskli bileşen tespit edilmedi.</div>';
+
+    content.innerHTML = `
+        <div class="d-flex align-items-center mb-4">
+            <button class="btn btn-outline-secondary me-3" onclick="location.reload()"><i class="bi bi-arrow-left"></i></button>
+            <h3 class="mb-0 fw-bold">Ürün Analiz Raporu</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-5 text-center mb-4">
+                <img src="${prod.gorsel_url || 'https://via.placeholder.com/300'}" class="img-fluid rounded shadow-sm mb-4 border" style="max-height: 250px; width: 100%; object-fit: contain; background: white;">
                 
-                detail.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <h6 style="margin: 0; color: var(--color-dark); font-weight: bold;">${escapeHtml(riskInfo.isim)}</h6>
-                        <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 1.2rem;">×</button>
+                <div class="card border-0 shadow-sm" style="background: var(--bg-body);">
+                    <div class="card-body">
+                        <div class="score-circle ${scoreColor} text-white mb-2">
+                            ${prod.genel_skor}
+                        </div>
+                        <h5 class="fw-bold mb-0">Sağlık Skoru</h5>
+                        <p class="badge ${scoreColor} mt-2 px-3">${prod.skor_aciklama || ''}</p>
                     </div>
-                    <p style="margin: 0; color: #6c757d; line-height: 1.5;">${escapeHtml(riskInfo.zarar_nedeni)}</p>
-                `;
+                </div>
+            </div>
+            
+            <div class="col-md-7">
+                <h2 class="fw-bold mb-2">${prod.urun_adi}</h2>
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2">${prod.kategori || 'Genel'}</span>
+                    <span class="text-muted"><i class="bi bi-upc-scan me-1"></i>${prod.barkod}</span>
+                </div>
                 
-                container.appendChild(detail);
-            }
-        }
+                <hr>
 
-        // XSS koruması
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-list-check me-2"></i>Tüm İçerikler</h5>
+                    <div class="p-3 bg-light rounded border lh-lg" style="max-height: 200px; overflow-y: auto;">
+                        ${icerikHTML}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-shield-exclamation me-2"></i>Zararlı Madde Tespitleri</h5>
+                    <div class="risk-list">
+                        ${riskliHTML}
+                    </div>
+                </div>
+
+                ${prod.alerjen ? `
+                <div class="alert alert-warning border-0 shadow-sm">
+                    <h6 class="fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Alerjen Uyarısı</h6>
+                    <p class="mb-0 small">${prod.alerjen}</p>
+                </div>` : ''}
+            </div>
+        </div>
+    `;
+}
+        function renderAddProductPanel(barcode) {
+            const content = document.getElementById('productContent');
+            content.innerHTML = `
+                <div class="text-center p-5">
+                    <div class="display-1 mb-4">🤷‍♂️</div>
+                    <h3 class="fw-bold">Ürün Bulunamadı</h3>
+                    <p class="text-muted lead">"${barcode}" aramasına uygun ürün kayıtlarımızda yok.</p>
+                    
+                    <div class="alert alert-info mt-4 mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Bu ürünü eklememiz için talepte bulunabilirsiniz.
+                    </div>
+
+                    <button class="btn btn-primary rounded-pill px-4 py-2" onclick="alert('Talebiniz alınmıştır! Teşekkürler.');">
+                        <i class="bi bi-plus-circle me-2"></i>Ekleme Talebi Gönder
+                    </button>
+                </div>
+            `;
         }
     </script>
 </body>
