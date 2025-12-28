@@ -19,15 +19,26 @@ if (empty($barcode) && empty($name)) {
 
 try {
     // 1. Ürünü veritabanından ara
-// product.php içinde ilgili kısmı şu şekilde güncelleyin:
-$stmt = $pdo->prepare("
-    SELECT u.*, k.isim as kategori_adi 
-    FROM urunler u 
-    LEFT JOIN kategoriler k ON u.kategori_id = k.id 
-    WHERE u.barkod = ? OR u.isim = ? 
-    LIMIT 1
-");
-$stmt->execute([$barcode, $name]); // LIKE yerine tam eşleşme (=) kullanıldı.
+    $sql = "SELECT u.*, k.isim as kategori_adi 
+            FROM urunler u 
+            LEFT JOIN kategoriler k ON u.kategori_id = k.id 
+            WHERE ";
+    
+    $params = [];
+    
+    if (!empty($barcode)) {
+        $sql .= "TRIM(u.barkod) = ?";
+        $params[] = trim($barcode);
+    } else {
+        // İsim araması - LIKE ile kısmi eşleşme
+        $sql .= "TRIM(u.isim) LIKE ?";
+        $params[] = '%' . trim($name) . '%';
+    }
+    
+    $sql .= " LIMIT 1";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
    
     $urun = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -61,7 +72,10 @@ foreach ($riskli_verisi as $risk) {
 // 5. Sağlık Skorunu hesapla
 $genel_skor = calculateWeightedHealthScore($riskli_verisi);
 
-// 6. Yanıtı hazırla
+// 6. Özel Sağlık Uyarıları (Çocuk ve Hamile)
+$saglik_uyarilari = getHealthWarnings($riskli_verisi);
+
+// 7. Yanıtı hazırla
 $response = [
     'urun_adi' => $urun['isim'],
     'kategori' => $urun['kategori_adi'] ?? 'Genel',
@@ -70,6 +84,7 @@ $response = [
     'skor_aciklama' => $genel_skor >= 70 ? 'İyi' : ($genel_skor >= 40 ? 'Orta' : 'Düşük'),
     'icerikler' => $icerikler, // BURASI: parseIngredients sayesinde tam liste gelecek
     'riskli_icerikler' => $riskli_isimler_ve_nedenler,
+    'saglik_uyarilari' => $saglik_uyarilari, // Yeni eklenen alan
     'alerjen' => $urun['alerjen'] ?? '',
     'barkod' => $urun['barkod']
 ];

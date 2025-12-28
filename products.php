@@ -11,18 +11,35 @@ if (empty($category_id)) {
 }
 
 try {
-    $stmt = $pdo->prepare("
-        SELECT 
-            u.barkod,
-            u.isim,
-            u.gorsel_url,
-            k.isim as kategori_adi
-        FROM urunler u
-        LEFT JOIN kategoriler k ON u.kategori_id = k.id
-        WHERE u.kategori_id = ?
-        ORDER BY u.isim ASC
-    ");
-    
+    // Kategori ID sayısal mı kontrol et
+    if (is_numeric($category_id)) {
+        $sql = "
+            SELECT 
+                u.barkod,
+                u.isim,
+                u.gorsel_url,
+                k.isim as kategori_adi
+            FROM urunler u
+            LEFT JOIN kategoriler k ON u.kategori_id = k.id
+            WHERE u.kategori_id = ?
+            ORDER BY u.isim ASC
+        ";
+    } else {
+        // Sayısal değilse isme göre ara (örn: "Çikolata")
+        $sql = "
+            SELECT 
+                u.barkod,
+                u.isim,
+                u.gorsel_url,
+                k.isim as kategori_adi
+            FROM urunler u
+            LEFT JOIN kategoriler k ON u.kategori_id = k.id
+            WHERE k.isim = ?
+            ORDER BY u.isim ASC
+        ";
+    }
+
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$category_id]);
     $urunler = $stmt->fetchAll(PDO::FETCH_ASSOC);
     

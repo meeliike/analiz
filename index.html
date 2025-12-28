@@ -80,9 +80,28 @@
         }
 
         [data-theme="dark"] .alert {
-            background-color: #1f2328;
+            background-color: #2c3036;
             border-color: #37404a;
             color: #e6e6e6;
+        }
+        
+        /* Dark Mode Improvements */
+        [data-theme="dark"] .bg-light {
+            background-color: #212529 !important; /* Bootstrap dark */
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .text-dark {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #adb5bd !important;
+        }
+
+        /* Navbar Overlap Fix */
+        #news-section, #daily-info-section {
+            scroll-margin-top: 100px;
         }
 
         body {
@@ -341,6 +360,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#news-section"><i class="bi bi-newspaper me-1"></i> Haberler</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#daily-info-section"><i class="bi bi-lightbulb me-1"></i> Günün Bilgisi</a>
+                    </li>
                     <li class="nav-item ms-3">
                         <button class="btn btn-outline-light rounded-circle" id="darkModeToggle">
                             <i class="bi bi-moon-stars"></i>
@@ -356,19 +378,13 @@
         <div class="row g-4">
             <!-- Left Column: Categories -->
             <div class="col-lg-3">
-                <div class="card h-100 border-0 shadow-sm">
+                <div class="card h-100 border-0 shadow-sm" style="position: sticky; top: 100px; max-height: calc(100vh - 120px); overflow: hidden;">
                     <div class="card-header bg-transparent border-bottom py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 fw-bold"><i class="bi bi-grid-fill me-2 category-icon" style="color: var(--accent-color); vertical-align: middle;"></i>Kategoriler</h5>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill" id="categorySearchBtn" data-bs-toggle="collapse" data-bs-target="#categorySearchArea" aria-expanded="false" aria-controls="categorySearchArea">
-                                <i class="bi bi-search me-1"></i> Kategorilerde arayın
-                            </button>
-                        </div>
-                        <div id="categorySearchArea" class="collapse mt-2">
-                            <input type="text" class="form-control form-control-sm" id="categorySearchInput" placeholder="Kategori adı yazın...">
                         </div>
                     </div>
-                    <div class="card-body p-0 category-list" id="categoriesList">
+                    <div class="card-body p-0 category-list" id="categoriesList" style="overflow-y: auto;">
                         <div class="text-center p-4">
                             <div class="spinner-border text-primary" role="status"></div>
                         </div>
@@ -420,54 +436,56 @@
         </div>
     </div>
 
-  
-        <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: 25px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(174, 216, 204, 0.1) 100%);">
+    <!-- Vision & Mission Section -->
+    <div class="container mb-5">
+        <div class="card border-0 shadow-sm p-5" style="border-radius: 20px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(174, 216, 204, 0.1) 100%);">
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="d-flex align-items-center mb-4">
-                        <i class="bi bi-shield-shaded display-4 text-primary me-3"></i>
+                        <i class="bi bi-shield-shaded display-5 text-primary me-3"></i>
                         <h2 class="fw-bold mb-0">Vizyon ve Misyonumuz</h2>
                     </div>
                     
-                    <div class="mission-text fs-5" style="line-height: 1.8; color: var(--text-body);">
+                    <div class="mission-text" style="line-height: 1.8; color: var(--text-body);">
                         <h4 class="fw-bold text-accent mb-3">Sağlıklı Yarınlar, Şeffaf İçeriklerle Başlar</h4>
-                        <p>Market rafları rengârenk ambalajlarla dolu. Ama asıl önemli olan, o ambalajların arkasındaki küçük yazılar. Çünkü sağlığımızı belirleyen şey reklamlar değil, içindekiler listesi. <strong>Paketli Gıda Analiz Sistemi</strong>, gıdayı üreticinin anlattığı gibi değil, gerçekte olduğu gibi görmenizi sağlar.</p>
+                        <p class="fs-5">Market rafları rengârenk ambalajlarla dolu. Ama asıl önemli olan, o ambalajların arkasındaki küçük yazılar. Çünkü sağlığımızı belirleyen şey reklamlar değil, içindekiler listesi. <strong>Paketli Gıda Analiz Sistemi</strong>, gıdayı üreticinin anlattığı gibi değil, gerçekte olduğu gibi görmenizi sağlar.</p>
                         
-                        <p>Bir barkod taramasıyla, tükettiğiniz ürünün içeriğini çözümler, riskleri açıkça ortaya koyar ve sizi bilinçli tercihlere yönlendirir. Gizli kalmış kimyasalları, belirsiz ifadeleri ve sağlığınızı etkileyebilecek bileşenleri sizin için görünür hâle getiririz.</p>
+                        <p class="fs-5">Bir barkod taramasıyla, tükettiğiniz ürünün içeriğini çözümler, riskleri açıkça ortaya koyar ve sizi bilinçli tercihlere yönlendirir. Gizli kalmış kimyasalları, belirsiz ifadeleri ve sağlığınızı etkileyebilecek bileşenleri sizin için görünür hâle getiririz.</p>
 
-                        <div class="row mt-5">
-                            <div class="col-md-6 mb-4">
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-3">
                                 <h5 class="fw-bold text-primary"><i class="bi bi-check2-circle me-2"></i>Temiz İçerik Bizim İçin Ne Demek?</h5>
-                                <p class="small">Biz “temiz içerik” kavramını pazarlama terimi olarak görmüyoruz. Temiz içerik; vücudun tanıdığı, mantığın kabul ettiği ve şeffafça üretilmiş gıdadır. Ev mutfağında yeri olmayan yüksek fruktozlu mısır şurubu, yapay tatlandırıcılar ve trans yağlar gibi bileşenlerin ürünlerde yer almaması gerekir.</p>
+                                <p class="fs-6">Biz “temiz içerik” kavramını pazarlama terimi olarak görmüyoruz. Temiz içerik; vücudun tanıdığı, mantığın kabul ettiği ve şeffafça üretilmiş gıdadır.</p>
                             </div>
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <h5 class="fw-bold text-primary"><i class="bi bi-question-circle me-2"></i>Neden Bu Sistemi Kurduk?</h5>
-                                <p class="small">Çünkü gıda etiketleri bilerek karmaşık yazılıyor. “Doğal”, “sağlıklı” gibi ifadeler çoğu zaman gerçeği yansıtmıyor. Bu sistemi, tüketicinin kontrolü yeniden eline alması için kurduk. Bu bir yasaklama platformu değil; bilgiyle güçlendirilmiş bilinçli seçim aracıdır.</p>
+                                <p class="fs-6">Çünkü gıda etiketleri bilerek karmaşık yazılıyor. Bu sistemi, tüketicinin kontrolü yeniden eline alması için kurduk.</p>
                             </div>
                         </div>
 
-                        <div class="alert alert-success border-0 shadow-sm mt-4 text-center py-3" style="border-radius: 15px;">
+                        <div class="alert alert-success border-0 shadow-sm mt-3 text-center py-3" style="border-radius: 15px;">
                             <h5 class="mb-0 fw-bold"><i class="bi bi-heart-fill text-danger me-2"></i>Sizin sağlığınız, bizim kırmızı çizgimizdir.</h5>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>  <!-- News Section -->
-    <div class="container mt-5 mb-5" id="news-section">
+    </div>
+
+    <!-- News Section -->
+    <div class="container mt-5 mb-5 py-5" id="news-section">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold"><i class="bi bi-newspaper me-2"></i>Gıda Gündemi</h3>
-                    <button class="btn btn-outline-primary rounded-pill" onclick="fetchRandomNews()">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Yeni Haber Getir
+            <div class="col-lg-12">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h2 class="fw-bold display-6"><i class="bi bi-newspaper me-3 text-primary"></i>Gıda Gündemi</h2>
+                    <button class="btn btn-outline-primary btn-lg rounded-pill px-4" onclick="fetchRandomNews()">
+                        <i class="bi bi-arrow-clockwise me-2"></i> Yenile
                     </button>
                 </div>
-                <div class="container my-5">
-                <div class="card border-0 shadow-sm overflow-hidden" id="newsCardContainer">
+                <div class="card border-0 shadow-lg overflow-hidden" id="newsCardContainer" style="border-radius: 20px;">
                     <!-- News Item -->
                     <div class="text-center p-5">
-                        <div class="spinner-border text-secondary" role="status"></div>
+                        <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status"></div>
                     </div>
                 </div>
             </div>
@@ -475,18 +493,18 @@
     </div>
 
     <!-- Daily Info Section -->
-    <div class="daily-info-section bg-transparent py-4">
+    <div class="daily-info-section bg-light py-5 mb-5" id="daily-info-section">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm" style="border-left: 6px solid var(--accent-color);">
-                        <div class="card-body p-4 d-flex align-items-center">
-                            <div class="flex-shrink-0 me-4">
-                                <i class="bi bi-lightbulb-fill display-4 text-warning"></i>
+                <div class="col-lg-12">
+                    <div class="card border-0 shadow-lg" style="border-left: 10px solid var(--accent-color); border-radius: 20px;">
+                        <div class="card-body p-5 d-flex align-items-center">
+                            <div class="flex-shrink-0 me-5 d-none d-md-block">
+                                <i class="bi bi-lightbulb-fill display-1 text-warning"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-2">Günün Bilgisi</h5>
-                                <p class="mb-0 text-muted fs-5">
+                                <h3 class="fw-bold mb-3 text-dark">Günün Bilgisi</h3>
+                                <p class="mb-0 text-muted fs-4 lh-lg">
                                     Paketli gıdalarda "E" kodu ile başlayan katkı maddelerinin hepsi zararlı değildir; örneğin E300 C vitaminidir. Etiket okumayı alışkanlık haline getirin! 🏷️
                                 </p>
                             </div>
@@ -528,8 +546,23 @@
         const modal = document.getElementById('cameraOverlay');
         modal.style.display = 'flex';
         
+        // Feedback element
+        let feedback = document.getElementById('scannerFeedback');
+        if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.id = 'scannerFeedback';
+            feedback.className = 'text-white mt-3 fw-bold bg-success px-3 py-1 rounded-pill d-none';
+            document.querySelector('.camera-modal').appendChild(feedback);
+        }
+        feedback.classList.add('d-none');
+        
         // Close logic
         document.getElementById('closeCameraBtn').onclick = closeScanner;
+
+        // Clear previous listeners
+        if (typeof Quagga.offDetected === 'function') {
+            Quagga.offDetected();
+        }
 
         Quagga.init({
             inputStream : {
@@ -565,7 +598,7 @@
         }, function(err) {
             if (err) {
                 console.log(err);
-                alert("Kamera başlatılamadı. Lütfen izinleri kontrol edin.");
+                alert("Kamera başlatılamadı. Lütfen izinleri kontrol edin ve HTTPS kullanıldığından emin olun.");
                 closeScanner();
                 return;
             }
@@ -591,12 +624,25 @@
             } else {
                 lastCode = code;
                 lastCodeCount = 1;
+                feedback.classList.add('d-none');
+            }
+            
+            // Visual Feedback
+            if (lastCodeCount > 0) {
+                 feedback.classList.remove('d-none');
+                 feedback.innerText = `Okunuyor... ${lastCodeCount}/3`;
             }
 
             if (lastCodeCount >= 3) {
                 console.log("Barkod doğrulandı:", code);
-                closeScanner();
-                showProductPanel(code, 'barcode');
+                feedback.innerText = `Başarılı! ${code}`;
+                
+                // Short delay to show success message
+                setTimeout(() => {
+                    closeScanner();
+                    showProductPanel(code, 'barcode');
+                }, 300);
+                
                 lastCode = null;
                 lastCodeCount = 0;
             }
@@ -748,35 +794,98 @@
 
         // Categories
         async function loadCategories() {
-            try {
-                const response = await fetch('categories.php');
-                const data = await response.json();
+            const list = document.getElementById('categoriesList');
+            list.innerHTML = '';
+
+            // User Defined Hierarchy
+            const hierarchy = {
+                "Atıştırmalıklar": ["Çikolata", "Bisküvi", "Cips", "Sakız"],
+                "İçecekler": ["Meyve Suyu", "Enerji İçeceği", "Kahve"],
+                "Süt ve Süt Ürünleri": ["Süt", "Yoğurt", "Peynir"],
+                "Temel Gıda": ["Tuz", "Yağ"],
+                "Baharat": []
+            };
+
+            const accordionId = 'categoriesAccordion';
+            const div = document.createElement('div');
+            div.className = 'accordion accordion-flush';
+            div.id = accordionId;
+
+            let index = 0;
+            for (const [mainCat, subCats] of Object.entries(hierarchy)) {
+                index++;
+                const hasSub = subCats.length > 0;
+                const itemId = `cat-${index}`;
+                const collapseId = `collapse-${index}`;
+
+                // Main Category Item
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'accordion-item border-0';
                 
-                const list = document.getElementById('categoriesList');
-                list.innerHTML = '';
+                // Header
+                const header = document.createElement('h2');
+                header.className = 'accordion-header';
+                header.id = `heading-${index}`;
                 
-                if (data.basari && data.kategoriler) {
-                    data.kategoriler.forEach(cat => {
-                        const a = document.createElement('a');
-                        a.className = 'category-item d-flex justify-content-between align-items-center';
-                        a.dataset.name = String(cat.isim || '');
-                        a.innerHTML = `
-                            <span class="fw-medium">${capitalizeWords(cat.isim || '')}</span>
-                            <span class="badge bg-secondary rounded-pill">${cat.urun_sayisi || 0}</span>
-                        `;
-                        a.onclick = (e) => {
-                            e.preventDefault();
-                            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-                            a.classList.add('active');
-                            showProductPanel(cat.id, 'category');
-                        };
-                        list.appendChild(a);
-                    });
+                const button = document.createElement('button');
+                // Always add 'collapsed' to ensure arrow points down (closed state)
+                button.className = `accordion-button collapsed shadow-none bg-transparent fw-bold text-dark`;
+                button.type = 'button';
+                button.style.fontSize = '1.05rem';
+                
+                if(hasSub) {
+                    button.setAttribute('data-bs-toggle', 'collapse');
+                    button.setAttribute('data-bs-target', `#${collapseId}`);
+                    button.setAttribute('aria-expanded', 'false');
+                } else {
+                    // For items without subcategories, remove the accordion arrow visual if desired, 
+                    // or keep it consistent. User asked for "downward arrow".
+                    // Bootstrap accordion-button::after is what creates the arrow.
+                    // If we want it to look like others but not toggle anything, we keep the class.
+                    // But if it has no subcategories, clicking it loads content.
+                    button.onclick = () => showProductPanel(mainCat, 'category');
                 }
-            } catch (e) {
-                console.error('Kategori hatası:', e);
-                document.getElementById('categoriesList').innerHTML = '<div class="text-danger p-3">Kategoriler yüklenemedi.</div>';
+                
+                button.innerHTML = `<i class="bi bi-circle-fill me-2" style="font-size: 0.5rem; color: var(--accent-color);"></i>${mainCat}`;
+                
+                header.appendChild(button);
+                itemDiv.appendChild(header);
+
+                // Body (Subcategories)
+                if (hasSub) {
+                    const collapseDiv = document.createElement('div');
+                    collapseDiv.id = collapseId;
+                    collapseDiv.className = 'accordion-collapse collapse';
+                    collapseDiv.setAttribute('data-bs-parent', `#${accordionId}`);
+                    
+                    const bodyDiv = document.createElement('div');
+                    bodyDiv.className = 'accordion-body p-0';
+                    
+                    const subList = document.createElement('div');
+                    subList.className = 'list-group list-group-flush';
+                    
+                    subCats.forEach(sub => {
+                        const subLink = document.createElement('a');
+                        subLink.href = '#';
+                        subLink.className = 'list-group-item list-group-item-action ps-5 border-0 text-muted';
+                        subLink.style.fontSize = '0.95rem';
+                        subLink.innerHTML = `<i class="bi bi-chevron-right me-1" style="font-size: 0.7rem;"></i>${sub}`;
+                        subLink.onclick = (e) => {
+                            e.preventDefault();
+                            showProductPanel(sub, 'category');
+                        };
+                        subList.appendChild(subLink);
+                    });
+                    
+                    bodyDiv.appendChild(subList);
+                    collapseDiv.appendChild(bodyDiv);
+                    itemDiv.appendChild(collapseDiv);
+                }
+
+                div.appendChild(itemDiv);
             }
+            
+            list.appendChild(div);
         }
 
         function capitalizeWords(str) {
@@ -790,7 +899,7 @@
         async function fetchRandomNews() {
             const container = document.getElementById('newsCardContainer');
             // Show Spinner
-            container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>';
+            container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
             
             try {
                 // Add timestamp to prevent caching
@@ -801,21 +910,21 @@
                     const h = data.haber;
                     container.innerHTML = `
                         <div class="row g-0">
-                            <div class="col-md-4">
-                                <img src="${h.gorsel || 'https://via.placeholder.com/400x300'}" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Haber Görseli">
+                            <div class="col-md-5">
+                                <img src="${h.gorsel || 'https://via.placeholder.com/600x400'}" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 300px;" alt="Haber Görseli">
                             </div>
-                            <div class="col-md-8">
-                                <div class="card-body p-4">
-                                    <h4 class="card-title fw-bold mb-3">${h.baslik}</h4>
-                                    <p class="card-text text-muted mb-4">${h.icerik}</p>
-                                    <p class="card-text"><small class="text-body-secondary"><i class="bi bi-calendar-event me-2"></i>${h.tarih}</small></p>
+                            <div class="col-md-7">
+                                <div class="card-body p-5">
+                                    <h3 class="card-title fw-bold mb-4">${h.baslik}</h3>
+                                    <p class="card-text text-muted mb-4 fs-5 lh-lg">${h.icerik}</p>
+                                    <p class="card-text"><small class="text-body-secondary fs-6"><i class="bi bi-calendar-event me-2"></i>${h.tarih}</small></p>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
             } catch (e) {
-                container.innerHTML = '<div class="text-danger p-4 text-center">Haber yüklenirken bir hata oluştu.</div>';
+                container.innerHTML = '<div class="text-danger p-5 text-center fs-5">Haber yüklenirken bir hata oluştu.</div>';
             }
         }
 
@@ -931,19 +1040,7 @@
             observer.observe(heroInputArea);
         }
 
-        // Category search filtering (case-insensitive, startsWith)
-        (function setupCategoryFiltering() {
-            const input = document.getElementById('categorySearchInput');
-            if (!input) return;
-            input.addEventListener('input', () => {
-                const term = input.value.toLocaleLowerCase('tr-TR').trim();
-                document.querySelectorAll('#categoriesList .category-item').forEach(item => {
-                    const name = (item.dataset.name || '').toLocaleLowerCase('tr-TR');
-                    const show = term === '' || name.startsWith(term);
-                    item.style.display = show ? 'block' : 'none';
-                });
-            });
-        })();
+        // Category search filtering removed as per request
 
        function renderProductDetail(prod) {
     const content = document.getElementById('productContent');
@@ -958,69 +1055,110 @@
 
     // İçeriklerin tamamını liste halinde veya düzgün metin olarak bas
     const icerikHTML = Array.isArray(prod.icerikler) 
-        ? prod.icerikler.map(item => `<span class="border rounded-pill px-2 py-1 me-1 mb-1 d-inline-block bg-white shadow-sm" style="font-size: 0.9rem;">${item}</span>`).join('')
+        ? `<div class="d-flex flex-wrap gap-2">` + 
+          prod.icerikler.map(item => `<span class="badge bg-light text-dark border p-2 fw-normal text-start" style="font-size: 0.9rem; line-height: 1.5; white-space: normal;">${item}</span>`).join('') + 
+          `</div>`
         : `<div class="p-2">${prod.icerikler || 'Bilgi yok'}</div>`;
 
-    // RİSKLİ İÇERİKLERİ NEDENLERİYLE BİRLİKTE BAS (Kritik Düzeltme)
-    const riskliHTML = (prod.riskli_icerikler && prod.riskli_icerikler.length > 0)
-        ? prod.riskli_icerikler.map(item => `
-            <div class="alert alert-danger d-flex align-items-start mb-2 shadow-sm border-start border-4 border-danger">
-                <i class="bi bi-exclamation-octagon-fill me-2 mt-1"></i>
-                <div>
-                    <strong class="d-block">${item.split('(')[0]}</strong> 
-                    <small class="d-block mt-1 opacity-75">${item.includes('(') ? item.substring(item.indexOf('(')) : ''}</small>
+    // SAĞLIK UYARILARI (Sade Tasarım - Sadece Ünlem Kırmızı)
+    let saglikUyarilariHTML = '';
+    if (prod.saglik_uyarilari && prod.saglik_uyarilari.length > 0) {
+        saglikUyarilariHTML = prod.saglik_uyarilari.map(uyari => `
+            <div class="alert bg-white border shadow-sm d-flex align-items-center mb-3 p-3 rounded-3" role="alert">
+                <i class="bi bi-exclamation-circle-fill text-danger fs-3 me-3"></i>
+                <div class="text-dark opacity-75 fw-medium">
+                    ${uyari.replace('Dikkat: ', '')}
                 </div>
-            </div>`).join('')
-        : '<div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>Riskli bileşen tespit edilmedi.</div>';
+            </div>
+        `).join('');
+    }
+
+    // RİSKLİ İÇERİKLER (Accordion / Toggle Style)
+    const riskliHTML = (prod.riskli_icerikler && prod.riskli_icerikler.length > 0)
+        ? prod.riskli_icerikler.map((item, idx) => `
+            <details class="mb-2 border rounded shadow-sm bg-white group">
+                <summary class="p-3 d-flex justify-content-between align-items-center cursor-pointer list-unstyled user-select-none">
+                    <div class="d-flex align-items-center text-danger fw-bold">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        ${item.isim || item.split('(')[0]}
+                    </div>
+                    <div class="d-flex align-items-center">
+                        ${item.risk_degeri ? `<span class="badge bg-danger rounded-pill me-2">Risk: ${item.risk_degeri}/5</span>` : ''}
+                        <i class="bi bi-chevron-down text-muted small transition-transform"></i>
+                    </div>
+                </summary>
+                <div class="px-3 pb-3 pt-0 text-muted small border-top bg-light">
+                    <div class="mt-2">
+                        <strong>Zarar Nedeni:</strong> ${item.zarar_nedeni || (item.includes('(') ? item.substring(item.indexOf('(')) : 'Belirtilmemiş')}
+                    </div>
+                </div>
+            </details>`).join('')
+        : '<div class="alert alert-success border-0 shadow-sm"><i class="bi bi-check-circle-fill me-2 text-success"></i>Riskli bileşen tespit edilmedi.</div>';
 
     content.innerHTML = `
         <div class="d-flex align-items-center mb-4">
-            <button class="btn btn-outline-secondary me-3" onclick="${backAction}"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-outline-secondary me-3 rounded-circle p-2" onclick="${backAction}" style="width: 40px; height: 40px;"><i class="bi bi-arrow-left"></i></button>
             <h3 class="mb-0 fw-bold">Ürün Analiz Raporu</h3>
         </div>
 
-        <div class="row">
-            <div class="col-md-5 text-center mb-4">
-                <img src="${prod.gorsel_url || 'https://via.placeholder.com/300'}" class="img-fluid rounded shadow-sm mb-4 border" style="max-height: 250px; width: 100%; object-fit: contain; background: white;">
+        <div class="row g-4">
+            <!-- Sol Kolon: Görsel ve Skor -->
+            <div class="col-md-5 text-center">
+                <div class="position-relative mb-4">
+                    <img src="${prod.gorsel_url || 'https://via.placeholder.com/300'}" class="img-fluid rounded-4 shadow-sm border bg-white p-3" style="max-height: 300px; width: 100%; object-fit: contain;">
+                    <span class="position-absolute top-0 end-0 m-3 badge ${scoreColor} fs-5 shadow px-3 py-2 rounded-pill">${prod.genel_skor}</span>
+                </div>
                 
-                <div class="card border-0 shadow-sm" style="background: var(--bg-body);">
-                    <div class="card-body">
-                        <div class="score-circle ${scoreColor} text-white mb-2">
-                            ${prod.genel_skor}
+                <div class="card border-0 shadow-sm rounded-4" style="background: var(--bg-body);">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 text-muted text-uppercase small">Sağlık Skoru Analizi</h5>
+                        <div class="progress mb-3" style="height: 10px;">
+                            <div class="progress-bar ${scoreColor}" role="progressbar" style="width: ${prod.genel_skor}%"></div>
                         </div>
-                        <h5 class="fw-bold mb-0">Sağlık Skoru</h5>
-                        <p class="badge ${scoreColor} mt-2 px-3">${prod.skor_aciklama || ''}</p>
+                        <h4 class="fw-bold mb-0 ${scoreColor.replace('bg-', 'text-')}">${prod.skor_aciklama || ''}</h4>
                     </div>
                 </div>
             </div>
             
+            <!-- Sağ Kolon: Detaylar -->
             <div class="col-md-7">
-                <h2 class="fw-bold mb-2">${prod.urun_adi}</h2>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2">${prod.kategori || 'Genel'}</span>
-                    <span class="text-muted"><i class="bi bi-upc-scan me-1"></i>${prod.barkod}</span>
+                <h2 class="fw-bold mb-2 display-6">${prod.urun_adi}</h2>
+                <div class="mb-4 d-flex align-items-center gap-2">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="bi bi-tag-fill me-1"></i>${prod.kategori || 'Genel'}</span>
+                    <span class="text-muted small"><i class="bi bi-upc-scan me-1"></i>${prod.barkod}</span>
                 </div>
                 
-                <hr>
+                <hr class="my-4 opacity-10">
+                
+                <!-- 1. Sağlık Uyarıları (En Üstte) -->
+                ${saglikUyarilariHTML}
 
-                <div class="mb-4">
-                    <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-list-check me-2"></i>Tüm İçerikler</h5>
-                    <div class="p-3 bg-light rounded border lh-lg" style="max-height: 200px; overflow-y: auto;">
+                <!-- 2. Tüm İçerikler (Ortada) -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-3 text-primary d-flex align-items-center">
+                        <i class="bi bi-list-check me-2 fs-4"></i>
+                        İçindekiler
+                    </h5>
+                    <div class="p-4 bg-white rounded-4 border shadow-sm">
                         ${icerikHTML}
                     </div>
                 </div>
 
+                <!-- 3. Riskli Bileşenler (Accordion - Altta) -->
                 <div class="mb-4">
-                    <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-shield-exclamation me-2"></i>Zararlı Madde Tespitleri</h5>
+                    <h5 class="fw-bold mb-3 text-danger d-flex align-items-center">
+                        <i class="bi bi-shield-exclamation me-2 fs-4"></i>
+                        Riskli Bileşenler
+                    </h5>
                     <div class="risk-list">
                         ${riskliHTML}
                     </div>
                 </div>
 
                 ${prod.alerjen ? `
-                <div class="alert alert-warning border-0 shadow-sm">
-                    <h6 class="fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Alerjen Uyarısı</h6>
-                    <p class="mb-0 small">${prod.alerjen}</p>
+                <div class="alert alert-warning border-0 shadow-sm rounded-3 mt-4">
+                    <h6 class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>Alerjen Uyarısı</h6>
+                    <p class="mb-0 small opacity-75">${prod.alerjen}</p>
                 </div>` : ''}
             </div>
         </div>
@@ -1029,12 +1167,20 @@
     function renderAddProductPanel(barcode) {
         const content = document.getElementById('productContent');
         const isDigits = /^\d+$/.test(barcode || '');
+        
+        let notFoundMsg = '';
+        if (isDigits) {
+            notFoundMsg = `"${barcode}" barkodlu ürün sistemimizde bulunamadı. Eklememiz için bize yardımcı olun.`;
+        } else {
+            notFoundMsg = `"${barcode}" isimli ürün sistemimizde bulunamadı. Eklememiz için bize yardımcı olun.`;
+        }
+
         content.innerHTML = `
             <div class="p-4 not-found-panel">
                 <div class="text-center mb-4">
                     <div class="display-1 mb-3">📝</div>
                     <h3 class="fw-bold">Ürün Ekleme Talebi</h3>
-                    <p class="text-muted">"${barcode}" barkodlu ürün sistemimizde bulunamadı. Eklememiz için bize yardımcı olun.</p>
+                    <p class="text-muted">${notFoundMsg}</p>
                 </div>
 
                 <div class="card border-0 shadow-sm">
