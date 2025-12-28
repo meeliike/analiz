@@ -20,27 +20,69 @@
 
         [data-theme="dark"] {
             --bg-body: #121212;
-            --text-body: #f8f9fa;
+            --text-body: #e0e0e0;
             --bg-card: #1E1E1E;
             --border-color: #333333;
-            --primary-color: #5c7cfa;
+            --primary-color: #748ffc;
             --accent-color: #ff8787;
             --dark-color: #1a1a1a;
             --hero-bg: #1E1E1E;
         }
         
-        [data-theme="dark"] .text-muted {
-            color: #adb5bd !important;
+        
+
+        /* Not Found Panel - Dark Mode Readability */
+        [data-theme="dark"] .not-found-panel h3,
+        [data-theme="dark"] .not-found-panel p,
+        [data-theme="dark"] .not-found-panel label {
+            color: #e6e6e6 !important;
+        }
+        [data-theme="dark"] .not-found-panel .text-muted {
+            color: #cfd3d8 !important;
         }
 
-        [data-theme="dark"] .form-control {
-            background-color: #2d2d2d;
-            border-color: #404040;
-            color: #fff;
+        [data-theme="dark"] .text-muted, 
+        [data-theme="dark"] .text-body-secondary {
+            color: #c3c7cc !important;
         }
-        
-        [data-theme="dark"] .form-control::placeholder {
-            color: #a0a0a0;
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] textarea.form-control {
+            background-color: #2b2b2b;
+            border-color: #4a4a4a;
+            color: #f1f3f5;
+        }
+
+        [data-theme="dark"] .form-control::placeholder,
+        [data-theme="dark"] textarea.form-control::placeholder {
+            color: #b0b5ba;
+        }
+
+        [data-theme="dark"] .category-icon {
+            color: #ffd1d1 !important;
+        }
+
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .list-group-item,
+        [data-theme="dark"] .modal-content,
+        [data-theme="dark"] .hero-section {
+            background-color: #1c1f24;
+            border-color: #2a2e33;
+            color: #e6e6e6;
+        }
+
+        [data-theme="dark"] .navbar-search input,
+        [data-theme="dark"] .search-input {
+            background-color: #2b2f36;
+            border-color: #3a3f45;
+            color: #f1f3f5;
+        }
+
+        [data-theme="dark"] .alert {
+            background-color: #1f2328;
+            border-color: #37404a;
+            color: #e6e6e6;
         }
 
         body {
@@ -280,7 +322,7 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Search Bar Integrated in Navbar -->
-                <form class="d-flex mx-auto navbar-search my-2 my-lg-0" onsubmit="handleSearch(event, 'navbarInput')">
+                <form id="navbarSearchForm" class="d-flex mx-auto navbar-search my-2 my-lg-0 d-none" onsubmit="handleSearch(event, 'navbarInput')">
                     <input class="form-control" type="search" id="navbarInput" placeholder="Barkod veya Ürün Adı..." aria-label="Search">
                     <div class="search-actions">
                         <button class="btn btn-sm btn-light rounded-circle" type="button" onclick="handleSearch(event, 'navbarInput')" title="Ara">
@@ -316,7 +358,15 @@
             <div class="col-lg-3">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-header bg-transparent border-bottom py-3">
-                        <h5 class="mb-0 fw-bold"><i class="bi bi-grid-fill me-2" style="color: var(--accent-color);"></i>Kategoriler</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-grid-fill me-2 category-icon" style="color: var(--accent-color); vertical-align: middle;"></i>Kategoriler</h5>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill" id="categorySearchBtn" data-bs-toggle="collapse" data-bs-target="#categorySearchArea" aria-expanded="false" aria-controls="categorySearchArea">
+                                <i class="bi bi-search me-1"></i> Kategorilerde arayın
+                            </button>
+                        </div>
+                        <div id="categorySearchArea" class="collapse mt-2">
+                            <input type="text" class="form-control form-control-sm" id="categorySearchInput" placeholder="Kategori adı yazın...">
+                        </div>
                     </div>
                     <div class="card-body p-0 category-list" id="categoriesList">
                         <div class="text-center p-4">
@@ -404,7 +454,7 @@
             </div>
         </div>
     </div>  <!-- News Section -->
-    <div class="container mb-5" id="news-section">
+    <div class="container mt-5 mb-5" id="news-section">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -472,7 +522,133 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     
     <!-- Barcode Scanner Logic -->
-    <script src="barcode_scanner.js"></script>
+    <script>
+    // Barcode Scanner Logic
+    function startScanner() {
+        const modal = document.getElementById('cameraOverlay');
+        modal.style.display = 'flex';
+        
+        // Close logic
+        document.getElementById('closeCameraBtn').onclick = closeScanner;
+
+        Quagga.init({
+            inputStream : {
+                name : "Live",
+                type : "LiveStream",
+                target: document.querySelector('#interactive'),
+                constraints: {
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 480, ideal: 720, max: 1080 },
+                    facingMode: "environment", // Arka kamera
+                    aspectRatio: { min: 1, max: 2 }
+                }
+            },
+            locator: {
+                patchSize: "medium",
+                halfSample: true
+            },
+            numOfWorkers: 4,
+            frequency: 10,
+            decoder : {
+                readers : [
+                    "ean_reader", // Türkiye'deki çoğu ürün (EAN-13)
+                    "ean_8_reader" // Küçük paketler
+                ],
+                debug: {
+                    drawBoundingBox: true,
+                    showFrequency: false,
+                    drawScanline: true,
+                    showPattern: false
+                }
+            },
+            locate: true
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                alert("Kamera başlatılamadı. Lütfen izinleri kontrol edin.");
+                closeScanner();
+                return;
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        // Hatalı okumaları engellemek için son okunan kodları sakla
+        let lastCode = null;
+        let lastCodeCount = 0;
+
+        Quagga.onDetected(function(result) {
+            const code = result.codeResult.code;
+            
+            // Basit doğrulama: EAN-13 genellikle 13 hane, EAN-8 8 hanedir
+            if (!code || (code.length !== 13 && code.length !== 8)) {
+                return; // Gürültü veya hatalı okuma
+            }
+
+            // Ardışık 3 kez aynı kodu okursa kabul et (Stabilite için)
+            if (code === lastCode) {
+                lastCodeCount++;
+            } else {
+                lastCode = code;
+                lastCodeCount = 1;
+            }
+
+            if (lastCodeCount >= 3) {
+                console.log("Barkod doğrulandı:", code);
+                closeScanner();
+                showProductPanel(code, 'barcode');
+                lastCode = null;
+                lastCodeCount = 0;
+            }
+        });
+    }
+
+    function closeScanner() {
+        document.getElementById('cameraOverlay').style.display = 'none';
+        try { Quagga.stop(); } catch(e) {}
+    }
+    </script>
+    <script>
+    function startScannerFill(inputId) {
+        const modal = document.getElementById('cameraOverlay');
+        modal.style.display = 'flex';
+        document.getElementById('closeCameraBtn').onclick = closeScanner;
+        Quagga.init({
+            inputStream : {
+                name : "Live",
+                type : "LiveStream",
+                target: document.querySelector('#interactive'),
+                constraints: {
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 480, ideal: 720, max: 1080 },
+                    facingMode: "environment",
+                    aspectRatio: { min: 1, max: 2 }
+                }
+            },
+            locator: { patchSize: "medium", halfSample: true },
+            numOfWorkers: 4,
+            frequency: 10,
+            decoder : {
+                readers : ["ean_reader","ean_8_reader"],
+                debug: { drawBoundingBox: true, showFrequency: false, drawScanline: true, showPattern: false }
+            },
+            locate: true
+        }, function(err) {
+            if (err) { closeScanner(); return; }
+            Quagga.start();
+        });
+        if (typeof Quagga.offDetected === 'function') {
+            Quagga.offDetected();
+        }
+        Quagga.onDetected(function(result) {
+            const code = result.codeResult.code;
+            if (!code || (code.length !== 13 && code.length !== 8)) return;
+            const input = document.getElementById(inputId);
+            if (input) input.value = code;
+            closeScanner();
+        });
+    }
+    </script>
 
     <script>
         // Main Logic
@@ -482,16 +658,24 @@
             loadCategories();
             fetchRandomNews();
             setupDarkMode();
+            setupHeroSearchVisibility();
             
             // Scanner Button
             const heroScanBtn = document.getElementById('heroScanBtn');
             const navbarScanBtn = document.getElementById('navbarScanBtn');
+            const categorySearchBtn = document.getElementById('categorySearchBtn');
             
             if(heroScanBtn && typeof startScanner === 'function') {
                 heroScanBtn.addEventListener('click', () => startScanner('heroSearchInput'));
             }
             if(navbarScanBtn && typeof startScanner === 'function') {
                 navbarScanBtn.addEventListener('click', () => startScanner('navbarInput'));
+            }
+            if(categorySearchBtn) {
+                categorySearchBtn.addEventListener('click', () => {
+                    const input = document.getElementById('categorySearchInput');
+                    if (input) input.focus();
+                });
             }
         });
 
@@ -503,6 +687,7 @@
                 document.getElementById('heroSection').style.display = 'block';
                 // Trigger reflow for animation if needed, but display block is instant
                 document.getElementById('heroSection').style.opacity = '1';
+                hideNavbarSearch();
             }, 300);
         }
 
@@ -517,6 +702,7 @@
             void panel.offsetWidth;
             
             panel.classList.add('visible');
+            showNavbarSearch();
         }
 
         // Search Handler
@@ -573,8 +759,9 @@
                     data.kategoriler.forEach(cat => {
                         const a = document.createElement('a');
                         a.className = 'category-item d-flex justify-content-between align-items-center';
+                        a.dataset.name = String(cat.isim || '');
                         a.innerHTML = `
-                            <span class="fw-medium">${cat.isim}</span>
+                            <span class="fw-medium">${capitalizeWords(cat.isim || '')}</span>
                             <span class="badge bg-secondary rounded-pill">${cat.urun_sayisi || 0}</span>
                         `;
                         a.onclick = (e) => {
@@ -590,6 +777,13 @@
                 console.error('Kategori hatası:', e);
                 document.getElementById('categoriesList').innerHTML = '<div class="text-danger p-3">Kategoriler yüklenemedi.</div>';
             }
+        }
+
+        function capitalizeWords(str) {
+            return String(str)
+                .split(' ')
+                .map(w => w ? w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1) : '')
+                .join(' ');
         }
 
         // News
@@ -712,6 +906,45 @@
             }
         };
 
+        function showNavbarSearch() {
+            const form = document.getElementById('navbarSearchForm');
+            if (form) form.classList.remove('d-none');
+        }
+
+        function hideNavbarSearch() {
+            const form = document.getElementById('navbarSearchForm');
+            if (form) form.classList.add('d-none');
+        }
+
+        function setupHeroSearchVisibility() {
+            const heroInputArea = document.querySelector('#heroSection .search-container');
+            if (!heroInputArea) return;
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        hideNavbarSearch();
+                    } else {
+                        showNavbarSearch();
+                    }
+                });
+            }, { threshold: 0.3 });
+            observer.observe(heroInputArea);
+        }
+
+        // Category search filtering (case-insensitive, startsWith)
+        (function setupCategoryFiltering() {
+            const input = document.getElementById('categorySearchInput');
+            if (!input) return;
+            input.addEventListener('input', () => {
+                const term = input.value.toLocaleLowerCase('tr-TR').trim();
+                document.querySelectorAll('#categoriesList .category-item').forEach(item => {
+                    const name = (item.dataset.name || '').toLocaleLowerCase('tr-TR');
+                    const show = term === '' || name.startsWith(term);
+                    item.style.display = show ? 'block' : 'none';
+                });
+            });
+        })();
+
        function renderProductDetail(prod) {
     const content = document.getElementById('productContent');
     
@@ -793,25 +1026,120 @@
         </div>
     `;
 }
-        function renderAddProductPanel(barcode) {
-            const content = document.getElementById('productContent');
-            content.innerHTML = `
-                <div class="text-center p-5">
-                    <div class="display-1 mb-4">🤷‍♂️</div>
-                    <h3 class="fw-bold">Ürün Bulunamadı</h3>
-                    <p class="text-muted lead">"${barcode}" aramasına uygun ürün kayıtlarımızda yok.</p>
-                    
-                    <div class="alert alert-info mt-4 mb-4">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Bu ürünü eklememiz için talepte bulunabilirsiniz.
-                    </div>
-
-                    <button class="btn btn-primary rounded-pill px-4 py-2" onclick="alert('Talebiniz alınmıştır! Teşekkürler.');">
-                        <i class="bi bi-plus-circle me-2"></i>Ekleme Talebi Gönder
-                    </button>
+    function renderAddProductPanel(barcode) {
+        const content = document.getElementById('productContent');
+        const isDigits = /^\d+$/.test(barcode || '');
+        content.innerHTML = `
+            <div class="p-4 not-found-panel">
+                <div class="text-center mb-4">
+                    <div class="display-1 mb-3">📝</div>
+                    <h3 class="fw-bold">Ürün Ekleme Talebi</h3>
+                    <p class="text-muted">"${barcode}" barkodlu ürün sistemimizde bulunamadı. Eklememiz için bize yardımcı olun.</p>
                 </div>
-            `;
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form id="productRequestForm" onsubmit="handleRequestSubmit(event, '${barcode}')">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Barkod</label>
+                                ${isDigits ? `
+                                    <input type="text" class="form-control bg-light" value="${barcode}" disabled>
+                                ` : `
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="reqBarcode" placeholder="Barkod numarası">
+                                        <button class="btn btn-warning" type="button" onclick="startScannerFill('reqBarcode')"><i class="bi bi-upc-scan"></i></button>
+                                    </div>
+                                `}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="reqName" class="form-label fw-bold">Ürün Adı <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="reqName" required placeholder="Örn: Ülker Çikolatalı Gofret">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="reqCategory" class="form-label fw-bold">Kategori <span class="text-danger">*</span></label>
+                                <select class="form-select" id="reqCategory" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="Atıştırmalık">Atıştırmalık</option>
+                                    <option value="İçecek">İçecek</option>
+                                    <option value="Süt Ürünleri">Süt Ürünleri</option>
+                                    <option value="Temel Gıda">Temel Gıda</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="reqNote" class="form-label fw-bold">Not (İsteğe Bağlı)</label>
+                                <textarea class="form-control" id="reqNote" rows="3" placeholder="Varsa içeriği veya diğer detayları ekleyebilirsiniz..."></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" id="requestBtn" class="btn btn-primary rounded-pill py-3 fw-bold">
+                                    <i class="bi bi-send me-2"></i>Talebi Gönder
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async function handleRequestSubmit(e, barcode) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('requestBtn');
+        const originalText = btn.innerHTML;
+        const barcodeInput = document.getElementById('reqBarcode');
+        const barcodeToSend = barcodeInput && barcodeInput.value.trim() ? barcodeInput.value.trim() : barcode;
+        const name = document.getElementById('reqName').value;
+        const category = document.getElementById('reqCategory').value;
+        const note = document.getElementById('reqNote').value;
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gönderiliyor...';
+
+        try {
+            const response = await fetch('request_product.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    barcode: barcodeToSend,
+                    name: name,
+                    category: category,
+                    note: note
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const content = document.getElementById('productContent');
+                content.innerHTML = `
+                    <div class="text-center p-5 animate__animated animate__fadeIn">
+                        <div class="display-1 text-success mb-4"><i class="bi bi-check-circle-fill"></i></div>
+                        <h3 class="fw-bold text-success">Talep Alındı!</h3>
+                        <p class="lead text-muted mb-4">"${name}" için ekleme talebiniz başarıyla bize ulaştı.</p>
+                        <button class="btn btn-outline-primary rounded-pill px-4" onclick="showHero()">
+                            <i class="bi bi-house me-2"></i>Ana Sayfaya Dön
+                        </button>
+                    </div>
+                `;
+            } else {
+                alert('Hata: ' + result.message);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        } catch (error) {
+            console.error('İstek hatası:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
+    }
     </script>
 </body>
 </html>

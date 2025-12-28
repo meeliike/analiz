@@ -25,6 +25,17 @@ try {
         FOREIGN KEY (kategori_id) REFERENCES kategoriler(id) ON DELETE SET NULL
     ) ENGINE=InnoDB;");
 
+    // Ürün İstekleri Tablosu
+    $pdo->exec("DROP TABLE IF EXISTS product_requests;");
+    $pdo->exec("CREATE TABLE product_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        barkod VARCHAR(50) NOT NULL,
+        isim VARCHAR(255) NOT NULL,
+        kategori VARCHAR(100) NOT NULL,
+        notlar TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB;");
+
     // Tüm Ürün Verileri
     $veriler = [
         // Çikolata

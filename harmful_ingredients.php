@@ -58,6 +58,19 @@ function getHarmfulIngredientsDictionary() {
         'Tartrazin' => ['isim' => 'Tartrazin (E102)', 'risk_degeri' => 3, 'zarar_nedeni' => 'Sarı renklendirici, hiperaktivite ve alerji riski. Astım ve egzama semptomlarını tetikleyebilir. Özellikle çocuklarda dikkat eksikliği ve hiperaktivite bozukluğu ile ilişkilendirilmiştir.'],
         'Siklamat' => ['isim' => 'Siklamat', 'risk_degeri' => 3, 'zarar_nedeni' => 'Yapay tatlandırıcı, bazı ülkelerde yasaklanmıştır. Mesane kanseri riski ile ilişkilendirilmiştir.'],
         'Neotam' => ['isim' => 'Neotam', 'risk_degeri' => 1, 'zarar_nedeni' => 'Yapay tatlandırıcı, aspartam türevi. Fenilketonüri (PKU) hastaları için dikkatli olunmalıdır.'],
+        
+        // Şeker ve Şuruplar
+        'Şeker' => ['isim' => 'İlave Şeker', 'risk_degeri' => 2, 'zarar_nedeni' => 'Aşırı tüketimi obezite, diyabet ve kalp hastalıkları riskini artırır. Kan şekerinde ani dalgalanmalara neden olur.'],
+        'Glikoz şurubu' => ['isim' => 'Glikoz Şurubu', 'risk_degeri' => 4, 'zarar_nedeni' => 'Yüksek glisemik indekse sahiptir. Kan şekerini hızla yükseltir. Obezite ve insülin direnci riskini artırır.'],
+        'Glikoz-Fruktoz şurubu' => ['isim' => 'Glikoz-Fruktoz Şurubu', 'risk_degeri' => 5, 'zarar_nedeni' => 'Vücut tarafından şekerden farklı işlenir. Karaciğer yağlanması, obezite ve diyabet riskini önemli ölçüde artırır.'],
+        'Mısır şurubu' => ['isim' => 'Mısır Şurubu', 'risk_degeri' => 5, 'zarar_nedeni' => 'Genellikle GDO\'lu mısırdan üretilir. Fruktoz içeriği yüksek olabilir. Metabolik sendrom riskini artırır.'],
+        'Maltodekstrin' => ['isim' => 'Maltodekstrin', 'risk_degeri' => 3, 'zarar_nedeni' => 'Çok yüksek glisemik indekse sahiptir (şekerden bile yüksek). Kan şekerini aniden yükseltir. Bağırsak florasını olumsuz etkileyebilir.'],
+        'İnvert şeker' => ['isim' => 'İnvert Şeker', 'risk_degeri' => 3, 'zarar_nedeni' => 'Sofra şekerine göre daha tatlıdır ve kan şekerini hızla etkiler. Aşırı kalori alımına neden olabilir.'],
+        
+        // Diğer Yağlar
+        'Margarin' => ['isim' => 'Margarin', 'risk_degeri' => 4, 'zarar_nedeni' => 'İşlenmiş bitkisel yağdır. Trans yağ içerme riski yüksektir. Enflamasyonu artırabilir.'],
+        'Kanola yağı' => ['isim' => 'Kanola Yağı', 'risk_degeri' => 2, 'zarar_nedeni' => 'Genellikle rafine edilmiş ve GDO\'lu tohumlardan elde edilir. Yüksek oranda omega-6 içerir, bu da vücutta iltihaplanmayı artırabilir.'],
+        'Ayçiçek yağı' => ['isim' => 'Ayçiçek Yağı', 'risk_degeri' => 1, 'zarar_nedeni' => 'Yüksek omega-6 içeriği nedeniyle aşırı tüketimi enflamasyonu tetikleyebilir. Rafine edilmiş versiyonları besin değerini yitirmiştir.'],
     ];
 }
 
@@ -217,12 +230,30 @@ function calculateWeightedHealthScore($riskli_icerikler) {
     // Başlangıç puanı
     $puan = 100;
     
-    // Her zararlı madde için risk_degeri kadar puan düş
+    // Her zararlı madde için risk değerine göre agresif puan düşüşü
     foreach ($riskli_icerikler as $riskli) {
         $risk_degeri = isset($riskli['risk_degeri']) ? (int)$riskli['risk_degeri'] : 1;
-        $puan -= $risk_degeri;
+        
+        // Puan kırma mantığı (Daha gerçekçi sonuçlar için artırıldı)
+        // Risk 5 (Yüksek): 20 puan düş
+        // Risk 3 (Orta): 10 puan düş
+        // Risk 1 (Düşük): 5 puan düş
+        if ($risk_degeri >= 5) {
+            $dusulecek_puan = 20;
+        } elseif ($risk_degeri >= 3) {
+            $dusulecek_puan = 10;
+        } else {
+            $dusulecek_puan = 5;
+        }
+        
+        $puan -= $dusulecek_puan;
     }
     
+    // Eğer 3'ten fazla riskli madde varsa ekstra ceza (-10 puan)
+    if (count($riskli_icerikler) > 3) {
+        $puan -= 10;
+    }
+
     // Puan asla 0'ın altına düşmemeli
     return max(0, $puan);
 }
