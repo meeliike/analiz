@@ -27,8 +27,21 @@ try {
     $params = [];
     
     if (!empty($barcode)) {
-        $sql .= "TRIM(u.barkod) = ?";
-        $params[] = trim($barcode);
+        $barcode = preg_replace('/\D/', '', $barcode);
+        $barcode = trim($barcode);
+        $candidates = [];
+        if ($barcode !== '') {
+            $candidates[] = $barcode;
+            if (strlen($barcode) === 13 && $barcode[0] === '0') {
+                $candidates[] = substr($barcode, 1);
+            }
+            if (strlen($barcode) === 12) {
+                $candidates[] = '0' . $barcode;
+            }
+        }
+        $placeholders = implode(',', array_fill(0, count($candidates), '?'));
+        $sql .= "TRIM(u.barkod) IN (" . $placeholders . ")";
+        $params = array_merge($params, $candidates);
     } else {
         // İsim araması - LIKE ile kısmi eşleşme
         $sql .= "TRIM(u.isim) LIKE ?";

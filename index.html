@@ -546,6 +546,13 @@
         const modal = document.getElementById('cameraOverlay');
         modal.style.display = 'flex';
         
+        const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        if (!isSecure) {
+            alert('Kamera erişimi için HTTPS veya localhost/127.0.0.1 gerekir.');
+            closeScanner();
+            return;
+        }
+        
         // Feedback element
         let feedback = document.getElementById('scannerFeedback');
         if (!feedback) {
@@ -563,6 +570,7 @@
         if (typeof Quagga.offDetected === 'function') {
             Quagga.offDetected();
         }
+        try { Quagga.stop(); } catch(e) {}
 
         Quagga.init({
             inputStream : {
@@ -580,12 +588,14 @@
                 patchSize: "medium",
                 halfSample: true
             },
-            numOfWorkers: 4,
-            frequency: 10,
+            numOfWorkers: 2,
+            frequency: 15,
             decoder : {
                 readers : [
-                    "ean_reader", // Türkiye'deki çoğu ürün (EAN-13)
-                    "ean_8_reader" // Küçük paketler
+                    "ean_reader",
+                    "ean_8_reader",
+                    "upc_reader",
+                    "code_128_reader"
                 ],
                 debug: {
                     drawBoundingBox: true,
@@ -611,11 +621,10 @@
         let lastCodeCount = 0;
 
         Quagga.onDetected(function(result) {
-            const code = result.codeResult.code;
-            
-            // Basit doğrulama: EAN-13 genellikle 13 hane, EAN-8 8 hanedir
+            const raw = (result && result.codeResult && result.codeResult.code) ? result.codeResult.code : '';
+            const code = raw.replace(/\D/g, '');
             if (!code || (code.length !== 13 && code.length !== 8)) {
-                return; // Gürültü veya hatalı okuma
+                return;
             }
 
             // Ardışık 3 kez aynı kodu okursa kabul et (Stabilite için)
@@ -636,13 +645,10 @@
             if (lastCodeCount >= 3) {
                 console.log("Barkod doğrulandı:", code);
                 feedback.innerText = `Başarılı! ${code}`;
-                
-                // Short delay to show success message
                 setTimeout(() => {
                     closeScanner();
                     showProductPanel(code, 'barcode');
                 }, 300);
-                
                 lastCode = null;
                 lastCodeCount = 0;
             }
@@ -687,7 +693,8 @@
             Quagga.offDetected();
         }
         Quagga.onDetected(function(result) {
-            const code = result.codeResult.code;
+            const raw = (result && result.codeResult && result.codeResult.code) ? result.codeResult.code : '';
+            const code = raw.replace(/\D/g, '');
             if (!code || (code.length !== 13 && code.length !== 8)) return;
             const input = document.getElementById(inputId);
             if (input) input.value = code;
